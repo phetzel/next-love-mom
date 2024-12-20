@@ -1,5 +1,5 @@
-// import { OwnedVaults } from '@/components/OwnedVaults'
-// import { ContributedVaults } from '@/components/ContributedVaults'
+import { OwnedVaults } from "@/components/owned-vaults";
+import { ContributedVaults } from "@/components/contributed-vaults";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function DashboardPage() {
@@ -16,8 +16,8 @@ export default async function DashboardPage() {
           Here are your Memory Vaults
         </p>
 
-        {/* <OwnedVaults />
-        <ContributedVaults /> */}
+        <OwnedVaults />
+        <ContributedVaults />
       </main>
     </div>
   );
