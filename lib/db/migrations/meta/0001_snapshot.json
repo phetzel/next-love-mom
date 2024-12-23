@@ -1,6 +1,6 @@
 {
-  "id": "116411a2-7e9e-4131-b1f1-7f7e6732392f",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "8dccdb6f-1097-484d-8982-ed88c80e874e",
+  "prevId": "116411a2-7e9e-4131-b1f1-7f7e6732392f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -41,6 +41,12 @@
         "vault_id": {
           "name": "vault_id",
           "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "depositor_id": {
+          "name": "depositor_id",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },

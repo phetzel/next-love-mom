@@ -1,5 +1,5 @@
 import { db } from "./drizzle";
-import { users, vaults, memories, vaultContributors } from "./schema";
+import { vaults, memories, vaultContributors } from "./schema";
 import { eq, and } from "drizzle-orm";
 
 // Permissions
@@ -78,16 +78,15 @@ export const getVaultContributors = async (vaultId: number) => {
   // Used to display all contributors for a specific vault
   return db
     .select({
-      id: users.id,
+      id: vaultContributors.userId,
     })
     .from(vaultContributors)
-    .innerJoin(users, eq(vaultContributors.userId, users.id))
     .where(eq(vaultContributors.vaultId, vaultId));
 };
 
 // Deposit
 export const getVaultDeposits = async (vaultId: number, userId: string) => {
-  // Used to get all contributions (memories) of a single user for a single vault
+  // Used to get all memories deposited by a specific user in a vault
   return db
     .select({
       id: memories.id,
@@ -98,6 +97,7 @@ export const getVaultDeposits = async (vaultId: number, userId: string) => {
       updatedAt: memories.updatedAt,
     })
     .from(memories)
-    .innerJoin(vaults, eq(memories.vaultId, vaults.id))
-    .where(and(eq(memories.vaultId, vaultId), eq(vaults.ownerId, userId)));
+    .where(
+      and(eq(memories.vaultId, vaultId), eq(memories.depositorId, userId))
+    );
 };

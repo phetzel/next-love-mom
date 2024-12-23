@@ -1,8 +1,9 @@
 import { MemoryCard } from "@/components/memory-card";
-import { ownedVaults } from "@/lib/mock";
-// import { Vault } from "@/types";
+import { getUserOwnedVaults } from "@/lib/api";
 
-export function OwnedVaults() {
+export async function OwnedVaults() {
+  const ownedVaults = await getUserOwnedVaults();
+
   if (ownedVaults.length === 0) return null;
 
   return (

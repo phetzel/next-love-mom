@@ -1,0 +1,1 @@
+ALTER TABLE "memories" ADD COLUMN "depositor_id" varchar(256) NOT NULL;

@@ -1,17 +1,43 @@
-import { users, vaults, memories, vaultContributors } from "./schema";
+import { vaults, memories, vaultContributors } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "./drizzle";
-
-// User mutations
-export const createUser = async (id: string) => {
-  // Used during user registration to create a new user account
-  return db.insert(users).values({ id }).returning();
-};
 
 // Vault mutations
 export const createVault = async (name: string, ownerId: string) => {
   // Used when a user creates a new memory vault
   return db.insert(vaults).values({ name, ownerId }).returning();
+};
+
+// User deletion
+export const deleteUserData = async (userId: string) => {
+  // Delete all memories uploaded by the user
+  await db.delete(memories).where(eq(memories.depositorId, userId));
+
+  // Delete all vault contributions
+  await db
+    .delete(vaultContributors)
+    .where(eq(vaultContributors.userId, userId));
+
+  // Get all vaults owned by the user
+  const userVaults = await db
+    .select()
+    .from(vaults)
+    .where(eq(vaults.ownerId, userId));
+
+  // Delete all memories in user's vaults
+  for (const vault of userVaults) {
+    await db.delete(memories).where(eq(memories.vaultId, vault.id));
+  }
+
+  // Delete all vault contributors for user's vaults
+  for (const vault of userVaults) {
+    await db
+      .delete(vaultContributors)
+      .where(eq(vaultContributors.vaultId, vault.id));
+  }
+
+  // Finally delete all vaults owned by the user
+  await db.delete(vaults).where(eq(vaults.ownerId, userId));
 };
 
 export const updateVault = async (id: number, name: string) => {
@@ -33,12 +59,13 @@ export const createMemory = async (
   title: string,
   imageUrl: string,
   audioUrl: string,
-  vaultId: number
+  vaultId: number,
+  depositorId: string
 ) => {
   // Used when adding a new memory to a vault
   return db
     .insert(memories)
-    .values({ title, imageUrl, audioUrl, vaultId })
+    .values({ title, imageUrl, audioUrl, vaultId, depositorId })
     .returning();
 };
 

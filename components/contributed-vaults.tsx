@@ -1,8 +1,11 @@
 import { MemoryCard } from "@/components/memory-card";
-import { contributedVaults } from "@/lib/mock";
-// import { Vault } from "@/types";
+import { getUserContributedVaults } from "@/lib/api";
 
-export function ContributedVaults() {
+export async function ContributedVaults() {
+  const contributedVaults = await getUserContributedVaults();
+
+  if (contributedVaults.length === 0) return null;
+
   return (
     <section className="relative">
       <h2 className="text-3xl font-semibold mb-6">Vaults You Contribute To</h2>

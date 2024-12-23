@@ -1,17 +1,9 @@
 import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-export const users = pgTable("users", {
-  id: varchar("id", { length: 256 }).primaryKey(), // Clerk user ID
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
 export const vaults = pgTable("vaults", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  ownerId: varchar("owner_id", { length: 256 })
-    .references(() => users.id)
-    .notNull(),
+  ownerId: varchar("owner_id", { length: 256 }).notNull(), // Clerk user ID
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -25,6 +17,7 @@ export const memories = pgTable("memories", {
   vaultId: serial("vault_id")
     .references(() => vaults.id)
     .notNull(),
+  depositorId: varchar("depositor_id", { length: 256 }).notNull(), // Clerk user ID
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -34,9 +27,7 @@ export const vaultContributors = pgTable("vault_contributors", {
   vaultId: serial("vault_id")
     .references(() => vaults.id)
     .notNull(),
-  userId: varchar("user_id", { length: 256 })
-    .references(() => users.id)
-    .notNull(),
+  userId: varchar("user_id", { length: 256 }).notNull(), // Clerk user ID
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
