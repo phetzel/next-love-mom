@@ -35,9 +35,6 @@ export default function middleware(
   ) {
     return clerkMiddleware(async (auth, req) => {
       if (isProtectedRoute(req)) {
-        console.log("clerkMiddleware auth", auth);
-        console.log("clerkMiddleware req", req);
-
         await auth.protect();
       }
 

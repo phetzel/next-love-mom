@@ -1,9 +1,19 @@
-import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const vaults = pgTable("vaults", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  ownerId: varchar("owner_id", { length: 256 }).notNull(), // Clerk user ID
+  ownerId: varchar("owner_id", { length: 256 }), // Clerk user ID (nullable until claimed)
+  creatorId: varchar("creator_id", { length: 256 }).notNull(), // Clerk user ID who created the vault
+  ownerEmail: text("owner_email").notNull(), // Email of intended owner
+  isClaimed: boolean("is_claimed").default(false).notNull(), // Whether the owner has claimed the vault
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

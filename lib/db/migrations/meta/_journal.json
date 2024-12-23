@@ -15,6 +15,13 @@
       "when": 1734978597907,
       "tag": "0001_busy_marvel_apes",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1734981004140,
+      "tag": "0002_stiff_sprite",
+      "breakpoints": true
     }
   ]
 }

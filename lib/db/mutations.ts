@@ -3,9 +3,21 @@ import { eq, and } from "drizzle-orm";
 import { db } from "./drizzle";
 
 // Vault mutations
-export const createVault = async (name: string, ownerId: string) => {
-  // Used when a user creates a new memory vault
-  return db.insert(vaults).values({ name, ownerId }).returning();
+export const createVault = async (
+  name: string,
+  creatorId: string,
+  ownerEmail: string
+) => {
+  // Used when creating a new memory vault for someone
+  return db
+    .insert(vaults)
+    .values({
+      name,
+      creatorId,
+      ownerEmail,
+      isClaimed: false,
+    })
+    .returning();
 };
 
 // User deletion
