@@ -1,6 +1,6 @@
 import { MemoryCard } from "@/components/memory-card";
 import { contributedVaults } from "@/lib/mock";
-import { Vault } from "@/types";
+// import { Vault } from "@/types";
 
 export function ContributedVaults() {
   return (

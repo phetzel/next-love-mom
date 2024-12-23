@@ -1,6 +1,6 @@
 import { MemoryCard } from "@/components/memory-card";
 import { ownedVaults } from "@/lib/mock";
-import { Vault } from "@/types";
+// import { Vault } from "@/types";
 
 export function OwnedVaults() {
   if (ownedVaults.length === 0) return null;

@@ -7,59 +7,61 @@ import { useState } from "react";
 // import { MemoryViewDialog } from "@/components/MemoryViewDialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Memory } from "@/types";
+// import { Memory } from "@/types";
 
 // Mock data for user's added memories
-const initialMemories: Memory[] = [
-  {
-    id: "1",
-    title: "My First Contribution",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-  {
-    id: "2",
-    title: "Family Reunion",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-];
+// const initialMemories: Memory[] = [
+//   {
+//     id: "1",
+//     title: "My First Contribution",
+//     image: "/placeholder.svg?height=400&width=600",
+//     audio: "/sample-audio.mp3",
+//   },
+//   {
+//     id: "2",
+//     title: "Family Reunion",
+//     image: "/placeholder.svg?height=400&width=600",
+//     audio: "/sample-audio.mp3",
+//   },
+// ];
 
-export default function DepositPage({ params }: { params: { id: string } }) {
+export default function DepositPage() {
   const [showList, setShowList] = useState(false);
-  const [userMemories, setUserMemories] = useState(initialMemories);
+  // const [userMemories, setUserMemories] = useState(initialMemories);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  // const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  // const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  // const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
 
-  const addMemory = (newMemory: Memory) => {
-    setUserMemories([...userMemories, newMemory]);
-    setIsAddDialogOpen(false);
-  };
+  console.log("isAddDialogOpen", isAddDialogOpen);
 
-  const editMemory = (updatedMemory: Memory) => {
-    setUserMemories(
-      userMemories.map((memory) =>
-        memory.id === updatedMemory.id ? updatedMemory : memory
-      )
-    );
-    setIsEditDialogOpen(false);
-  };
+  // const addMemory = (newMemory: Memory) => {
+  //   setUserMemories([...userMemories, newMemory]);
+  //   setIsAddDialogOpen(false);
+  // };
 
-  const deleteMemory = (id: string) => {
-    setUserMemories(userMemories.filter((memory) => memory.id !== id));
-  };
+  // const editMemory = (updatedMemory: Memory) => {
+  //   setUserMemories(
+  //     userMemories.map((memory) =>
+  //       memory.id === updatedMemory.id ? updatedMemory : memory
+  //     )
+  //   );
+  //   setIsEditDialogOpen(false);
+  // };
 
-  const openEditDialog = (memory: Memory) => {
-    setSelectedMemory(memory);
-    setIsEditDialogOpen(true);
-  };
+  // const deleteMemory = (id: string) => {
+  //   setUserMemories(userMemories.filter((memory) => memory.id !== id));
+  // };
 
-  const openViewDialog = (memory: Memory) => {
-    setSelectedMemory(memory);
-    setIsViewDialogOpen(true);
-  };
+  // const openEditDialog = (memory: Memory) => {
+  //   setSelectedMemory(memory);
+  //   setIsEditDialogOpen(true);
+  // };
+
+  // const openViewDialog = (memory: Memory) => {
+  //   setSelectedMemory(memory);
+  //   setIsViewDialogOpen(true);
+  // };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

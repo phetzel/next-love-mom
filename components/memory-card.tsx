@@ -16,7 +16,7 @@ export function MemoryCard({
   name,
   ownerName,
   memoryCount,
-  lastUpdated,
+  // lastUpdated,
   isOwned,
 }: MemoryCardProps) {
   return (

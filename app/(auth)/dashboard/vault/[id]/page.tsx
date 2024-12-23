@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "@/components/header";
+// import { Header } from "@/components/header";
 import { MemoryPlayer } from "@/components/memory-player";
 import { MemoryList } from "@/components/memory-list";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ const memories = [
   },
 ];
 
-export default function VaultPage({ params }: { params: { id: string } }) {
+export default function VaultPage() {
   const [currentMemory, setCurrentMemory] = useState(memories[0]);
   const [showList, setShowList] = useState(false);
 
