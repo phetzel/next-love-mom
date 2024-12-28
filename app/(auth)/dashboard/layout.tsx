@@ -1,8 +1,12 @@
-import { Header } from "@/components/header";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
 
-export default async function AuthLayout({
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { Header } from "@/components/header";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,11 +18,14 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <div className="flex-grow flex items-center justify-center">
-        {children}
+    <>
+      <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-grow flex items-center justify-center">
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

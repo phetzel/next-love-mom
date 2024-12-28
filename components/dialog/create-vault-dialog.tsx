@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { createVaultAction } from "@/app/actions/vault";
 
 const createVaultSchema = z.object({
@@ -70,9 +71,7 @@ export function CreateVaultDialog() {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              Vault Name
-            </label>
+            <Label htmlFor="name">Vault Name</Label>
             <Input
               {...register("name")}
               id="name"
@@ -83,9 +82,7 @@ export function CreateVaultDialog() {
             )}
           </div>
           <div className="space-y-2">
-            <label htmlFor="ownerEmail" className="text-sm font-medium">
-              Owner&apos;s Email
-            </label>
+            <Label htmlFor="ownerEmail">Owner&apos;s Email</Label>
             <Input
               {...register("ownerEmail")}
               id="ownerEmail"

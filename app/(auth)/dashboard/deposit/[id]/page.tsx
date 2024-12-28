@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-// import { AddMemoryDialog } from "@/components/AddMemoryDialog";
-// import { EditMemoryDialog } from "@/components/EditMemoryDialog";
-// import { UserMemoryList } from "@/components/UserMemoryList";
-// import { MemoryViewDialog } from "@/components/MemoryViewDialog";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { CreateMemoryDialog } from "@/components/dialog/create-memory-dialog";
 // import { Memory } from "@/types";
 
 // Mock data for user's added memories
@@ -71,12 +67,9 @@ export default function DepositPage() {
         </h1>
 
         <div className="flex flex-col items-center space-y-4 mb-8">
-          <Button
-            onClick={() => setIsAddDialogOpen(true)}
-            className="w-full max-w-xs flex items-center justify-center"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add New Memory
-          </Button>
+          <div className="w-full max-w-xs">
+            <CreateMemoryDialog />
+          </div>
           <Button
             onClick={() => setShowList(!showList)}
             variant="outline"
