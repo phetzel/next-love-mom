@@ -3,7 +3,11 @@ import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db/drizzle";
 import { memories } from "@/lib/db/schema";
-import { getVaultsByOwnerId, getContributedVaults } from "@/lib/db/queries";
+import {
+  getVaultsByOwnerId,
+  getContributedVaults,
+  getVaultDeposits,
+} from "@/lib/db/queries";
 import { Vault } from "@/types";
 
 async function requireAuth() {
@@ -60,4 +64,18 @@ export async function getUserContributedVaults(): Promise<Vault[]> {
       };
     })
   );
+}
+
+export async function getUserVaultDeposits(vaultId: number) {
+  const user = await requireAuth();
+  const deposits = await getVaultDeposits(vaultId, user.id);
+
+  return deposits.map((memory) => ({
+    id: memory.id,
+    title: memory.title,
+    imageUrl: memory.imageUrl,
+    audioUrl: memory.audioUrl,
+    createdAt: memory.createdAt.toISOString(),
+    updatedAt: memory.updatedAt.toISOString(),
+  }));
 }

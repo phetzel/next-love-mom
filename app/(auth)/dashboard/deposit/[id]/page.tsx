@@ -1,118 +1,34 @@
-"use client";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { CreateMemoryDialog } from "@/components/dialog/create-memory-dialog";
-// import { Memory } from "@/types";
+import { UserDepositList } from "@/components/user-deposit-list";
+import { getUserVaultDeposits } from "@/lib/api";
 
-// Mock data for user's added memories
-// const initialMemories: Memory[] = [
-//   {
-//     id: "1",
-//     title: "My First Contribution",
-//     image: "/placeholder.svg?height=400&width=600",
-//     audio: "/sample-audio.mp3",
-//   },
-//   {
-//     id: "2",
-//     title: "Family Reunion",
-//     image: "/placeholder.svg?height=400&width=600",
-//     audio: "/sample-audio.mp3",
-//   },
-// ];
+interface Memory {
+  id: number;
+  title: string;
+  imageUrl: string;
+  audioUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-export default function DepositPage() {
-  const [showList, setShowList] = useState(false);
-  // const [userMemories, setUserMemories] = useState(initialMemories);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  // const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  // const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  // const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
-
-  console.log("isAddDialogOpen", isAddDialogOpen);
-
-  // const addMemory = (newMemory: Memory) => {
-  //   setUserMemories([...userMemories, newMemory]);
-  //   setIsAddDialogOpen(false);
-  // };
-
-  // const editMemory = (updatedMemory: Memory) => {
-  //   setUserMemories(
-  //     userMemories.map((memory) =>
-  //       memory.id === updatedMemory.id ? updatedMemory : memory
-  //     )
-  //   );
-  //   setIsEditDialogOpen(false);
-  // };
-
-  // const deleteMemory = (id: string) => {
-  //   setUserMemories(userMemories.filter((memory) => memory.id !== id));
-  // };
-
-  // const openEditDialog = (memory: Memory) => {
-  //   setSelectedMemory(memory);
-  //   setIsEditDialogOpen(true);
-  // };
-
-  // const openViewDialog = (memory: Memory) => {
-  //   setSelectedMemory(memory);
-  //   setIsViewDialogOpen(true);
-  // };
+export default async function DepositPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const memories = await getUserVaultDeposits(parseInt(params.id));
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold text-center mb-8 text-primary">
+    <main className="min-h-screen flex justify-center container mx-auto px-4 py-12">
+      <div className="max-w-xs flex flex-col items-center space-y-4 mb-8">
+        <h1 className="text-4xl font-bold text-center mb-4 text-primary">
           Deposit Memories
         </h1>
 
-        <div className="flex flex-col items-center space-y-4 mb-8">
-          <div className="w-full max-w-xs">
-            <CreateMemoryDialog />
-          </div>
-          <Button
-            onClick={() => setShowList(!showList)}
-            variant="outline"
-            className="w-full max-w-xs"
-          >
-            {showList ? "Hide" : "Show"} My Contributions
-          </Button>
-        </div>
+        <CreateMemoryDialog />
 
-        {showList && (
-          <div className="mt-8 transition-all duration-300 ease-in-out max-h-[600px] overflow-hidden">
-            {/* <UserMemoryList
-              memories={userMemories}
-              onDelete={deleteMemory}
-              onEdit={openEditDialog}
-              onView={openViewDialog}
-            /> */}
-          </div>
-        )}
-
-        {/* <AddMemoryDialog
-          isOpen={isAddDialogOpen}
-          onOpenChange={setIsAddDialogOpen}
-          onAddMemory={addMemory}
-        /> */}
-
-        {/* {selectedMemory && (
-          <EditMemoryDialog
-            isOpen={isEditDialogOpen}
-            onOpenChange={setIsEditDialogOpen}
-            onEditMemory={editMemory}
-            memory={selectedMemory}
-          />
-        )} */}
-
-        {/* {selectedMemory && (
-          <MemoryViewDialog
-            isOpen={isViewDialogOpen}
-            onOpenChange={setIsViewDialogOpen}
-            memory={selectedMemory}
-          />
-        )} */}
-      </main>
-    </div>
+        <UserDepositList memories={memories} />
+      </div>
+    </main>
   );
 }

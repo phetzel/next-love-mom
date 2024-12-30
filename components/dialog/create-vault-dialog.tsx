@@ -57,7 +57,10 @@ export function CreateVaultDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full transition-all duration-200 hover:bg-primary/10 hover:text-primary"
+        >
           Create Memory Vault
         </Button>
       </DialogTrigger>

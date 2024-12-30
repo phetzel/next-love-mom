@@ -22,9 +22,7 @@ export default async function DashboardLayout({
       <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <div className="flex-grow flex items-center justify-center">
-          {children}
-        </div>
+        {children}
       </div>
     </>
   );
