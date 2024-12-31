@@ -1,4 +1,4 @@
-import { MemoryCard } from "@/components/memory-card";
+import { VaultCard } from "@/components/vault/vault-card";
 import { CreateVaultDialog } from "@/components/dialog/create-vault-dialog";
 import { getUserContributedVaults } from "@/lib/api";
 
@@ -20,7 +20,7 @@ export async function ContributedVaults() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {contributedVaults.map((vault) => (
-            <MemoryCard
+            <VaultCard
               key={vault.id}
               id={vault.id}
               name={vault.name}

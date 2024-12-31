@@ -1,5 +1,5 @@
-import { OwnedVaults } from "@/components/owned-vaults";
-import { ContributedVaults } from "@/components/contributed-vaults";
+import { OwnedVaults } from "@/components/vault/owned-vaults";
+import { ContributedVaults } from "@/components/vault/contributed-vaults";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function DashboardPage() {

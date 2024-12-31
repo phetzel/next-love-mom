@@ -7,8 +7,10 @@ export interface Vault {
 }
 
 export interface Memory {
-  id: string;
+  id: number;
   title: string;
-  image: string;
-  audio: string;
+  imageUrl: string;
+  audioUrl: string;
+  createdAt: string;
+  updatedAt: string;
 }

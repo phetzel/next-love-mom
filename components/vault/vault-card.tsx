@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface MemoryCardProps {
+interface VaultCardProps {
   id: string;
   name: string;
   ownerName: string;
@@ -11,14 +11,14 @@ interface MemoryCardProps {
   isOwned: boolean;
 }
 
-export function MemoryCard({
+export function VaultCard({
   id,
   name,
   ownerName,
   memoryCount,
   // lastUpdated,
   isOwned,
-}: MemoryCardProps) {
+}: VaultCardProps) {
   return (
     <Card className="hover:shadow-lg transition-shadow border-2 border-primary/20">
       <CardHeader>

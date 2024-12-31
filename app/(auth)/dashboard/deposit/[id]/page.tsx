@@ -1,15 +1,6 @@
 import { CreateMemoryDialog } from "@/components/dialog/create-memory-dialog";
-import { UserDepositList } from "@/components/user-deposit-list";
+import { DepositList } from "@/components/deposit/deposit-list";
 import { getUserVaultDeposits } from "@/lib/api";
-
-interface Memory {
-  id: number;
-  title: string;
-  imageUrl: string;
-  audioUrl: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default async function DepositPage({
   params,
@@ -27,7 +18,7 @@ export default async function DepositPage({
 
         <CreateMemoryDialog />
 
-        <UserDepositList memories={memories} />
+        <DepositList memories={memories} />
       </div>
     </main>
   );

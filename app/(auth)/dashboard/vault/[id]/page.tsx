@@ -1,41 +1,15 @@
 "use client";
 
 import { useState } from "react";
-// import { Header } from "@/components/header";
-import { MemoryPlayer } from "@/components/memory-player";
-import { MemoryList } from "@/components/memory-list";
-import { Button } from "@/components/ui/button";
 import { Shuffle, List } from "lucide-react";
 
-// Mock data for memories
-const memories = [
-  {
-    id: "1",
-    title: "First Day of School",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-  {
-    id: "2",
-    title: "Family Vacation",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-  {
-    id: "3",
-    title: "Grandma's Birthday",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-  {
-    id: "4",
-    title: "Learning to Ride a Bike",
-    image: "/placeholder.svg?height=400&width=600",
-    audio: "/sample-audio.mp3",
-  },
-];
+import { MemoryPlayer } from "@/components/memory/memory-player";
+import { MemoryList } from "@/components/memory/memory-list";
+import { Button } from "@/components/ui/button";
+import { Memory } from "@/types";
 
 export default function VaultPage() {
+  const memories: Memory[] = [];
   const [currentMemory, setCurrentMemory] = useState(memories[0]);
   const [showList, setShowList] = useState(false);
 

@@ -1,4 +1,4 @@
-import { MemoryCard } from "@/components/memory-card";
+import { VaultCard } from "@/components/vault/vault-card";
 import { getUserOwnedVaults } from "@/lib/api";
 
 export async function OwnedVaults() {
@@ -11,7 +11,7 @@ export async function OwnedVaults() {
       <h2 className="text-3xl font-semibold mb-6 text-primary">Your Vaults</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {ownedVaults.map((vault) => (
-          <MemoryCard
+          <VaultCard
             key={vault.id}
             id={vault.id}
             name={vault.name}

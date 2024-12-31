@@ -15,6 +15,7 @@ interface MemoryPlayerProps {
 export function MemoryPlayer({ memory }: MemoryPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  console.log("MemoryPlayerProps", memory);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -32,7 +33,7 @@ export function MemoryPlayer({ memory }: MemoryPlayerProps) {
       <CardContent className="p-0">
         <div className="relative aspect-video">
           <Image
-            src={memory.image}
+            src={memory.imageUrl}
             alt={memory.title}
             layout="fill"
             objectFit="cover"
@@ -40,7 +41,7 @@ export function MemoryPlayer({ memory }: MemoryPlayerProps) {
         </div>
         <div className="p-4">
           <h2 className="text-2xl font-semibold mb-4">{memory.title}</h2>
-          <audio ref={audioRef} src={memory.audio} className="hidden" />
+          <audio ref={audioRef} src={memory.audioUrl} className="hidden" />
           <Button onClick={togglePlay} className="w-full">
             {isPlaying ? (
               <Pause className="mr-2 h-4 w-4" />
