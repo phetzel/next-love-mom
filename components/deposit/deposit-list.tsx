@@ -1,22 +1,37 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Memory } from "@/types";
 import { DepositCard } from "@/components/deposit/deposit-card";
 import { MemoryViewDialog } from "@/components/dialog/view-memory-dialog";
+import { DeleteMemoryDialog } from "@/components/dialog/delete-memory-dialog";
+import { deleteMemoryAction } from "@/app/actions/memory";
 
 interface DepositListProps {
   memories: Memory[];
 }
 
 export function DepositList({ memories }: DepositListProps) {
+  const router = useRouter();
   const [showList, setShowList] = useState<boolean>(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  const [memoryToDelete, setMemoryToDelete] = useState<Memory | null>(null);
 
-  const onDelete = (id: number) => {};
-  const onEdit = (memory: Memory) => {};
+  const onDelete = async (id: number) => {
+    try {
+      const result = await deleteMemoryAction(id);
+      if (result.success) {
+        setMemoryToDelete(null);
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Failed to delete memory:", error);
+    }
+  };
+
   const onView = (memory: Memory) => {
     setSelectedMemory(memory);
   };
@@ -39,8 +54,7 @@ export function DepositList({ memories }: DepositListProps) {
               key={memory.id}
               memory={memory}
               onView={onView}
-              onEdit={onEdit}
-              onDelete={onDelete}
+              onDelete={() => setMemoryToDelete(memory)}
             />
           ))}
         </div>
@@ -51,6 +65,15 @@ export function DepositList({ memories }: DepositListProps) {
         onOpenChange={(open) => !open && setSelectedMemory(null)}
         memory={selectedMemory!}
       />
+
+      {memoryToDelete && (
+        <DeleteMemoryDialog
+          isOpen={!!memoryToDelete}
+          onOpenChange={(open) => !open && setMemoryToDelete(null)}
+          onConfirm={() => onDelete(memoryToDelete.id)}
+          title={memoryToDelete.title}
+        />
+      )}
     </div>
   );
 }

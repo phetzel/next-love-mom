@@ -28,6 +28,39 @@ export const isUserOwner = async (vaultId: number, userId: string) => {
   return result[0].count > 0;
 };
 
+export const canDeleteMemory = async (memoryId: number, userId: string) => {
+  // Check if user is either the memory depositor or vault owner
+  const memory = await db.query.memories.findFirst({
+    where: eq(memories.id, memoryId),
+  });
+
+  if (!memory) {
+    return { allowed: false, error: "Memory not found" };
+  }
+
+  // Check if user is the memory depositor
+  if (memory.depositorId === userId) {
+    return { allowed: true };
+  }
+
+  // Check if user is the vault owner
+  const vault = await db.query.vaults.findFirst({
+    where: eq(vaults.id, memory.vaultId),
+  });
+
+  if (!vault) {
+    return { allowed: false, error: "Vault not found" };
+  }
+
+  return {
+    allowed: vault.ownerId === userId,
+    error:
+      vault.ownerId !== userId
+        ? "Not authorized to delete this memory"
+        : undefined,
+  };
+};
+
 // Dashboard
 export const getVaultsByOwnerId = async (ownerId: string) => {
   // Used in the dashboard to display vaults owned by the current user

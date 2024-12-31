@@ -7,16 +7,10 @@ import { Memory } from "@/types";
 interface DepositCardProps {
   memory: Memory;
   onView: (memory: Memory) => void;
-  onEdit: (memory: Memory) => void;
   onDelete: (id: number) => void;
 }
 
-export function DepositCard({
-  memory,
-  onView,
-  onEdit,
-  onDelete,
-}: DepositCardProps) {
+export function DepositCard({ memory, onView, onDelete }: DepositCardProps) {
   return (
     <Card className="flex justify-between items-center">
       <CardHeader className="py-3">
@@ -25,9 +19,6 @@ export function DepositCard({
       <CardContent className="flex items-center space-x-2 py-3">
         <Button variant="outline" size="icon" onClick={() => onView(memory)}>
           <Eye className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="icon" onClick={() => onEdit(memory)}>
-          <Edit className="h-4 w-4" />
         </Button>
         <Button
           variant="destructive"

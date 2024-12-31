@@ -1,7 +1,8 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { createMemory } from "@/lib/db/mutations";
+import { createMemory, deleteMemory } from "@/lib/db/mutations";
+import { canDeleteMemory } from "@/lib/db/queries";
 
 type CreateMemoryInput = {
   title: string;
@@ -34,5 +35,24 @@ export async function createMemoryAction({
   } catch (error) {
     console.error("Failed to create memory:", error);
     return { success: false, error: "Failed to create memory" };
+  }
+}
+
+export async function deleteMemoryAction(memoryId: number) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Not authenticated");
+
+  try {
+    const permission = await canDeleteMemory(memoryId, userId);
+
+    if (!permission.allowed) {
+      return { success: false, error: permission.error };
+    }
+
+    const [deletedMemory] = await deleteMemory(memoryId);
+    return { success: true, data: deletedMemory };
+  } catch (error) {
+    console.error("Failed to delete memory:", error);
+    return { success: false, error: "Failed to delete memory" };
   }
 }
