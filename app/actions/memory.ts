@@ -25,6 +25,7 @@ export async function createMemoryAction({
   try {
     const [memory] = await createMemory(
       title,
+      description,
       imageUrl,
       audioUrl,
       vaultId,

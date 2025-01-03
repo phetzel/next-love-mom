@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db/drizzle";
 import { memories } from "@/lib/db/schema";

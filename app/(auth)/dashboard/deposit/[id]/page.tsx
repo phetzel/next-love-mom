@@ -1,7 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
 
-import { CreateMemoryDialog } from "@/components/dialog/create-memory-dialog";
-import { DepositList } from "@/components/deposit/deposit-list";
 import DepositPageContent from "@/components/deposit-page-content";
 import ContributorsSection from "@/components/contributors/contributors-section";
 import { getUserVaultDeposits, getVault } from "@/lib/api";
@@ -22,12 +20,7 @@ export default async function DepositPage({
   const vault = await getVault(vaultId);
   const memories = await getUserVaultDeposits(vaultId);
 
-  // const isCreator = await isUserCreator(vaultId, user.id);
-
   const isCreator = vault.creatorId === user.id;
-  console.log("isCreator", isCreator);
-  console.log("vault", vault);
-  console.log("memories", memories);
 
   return (
     <main className="flex-grow container mx-auto px-4 py-12">

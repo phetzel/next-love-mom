@@ -1,9 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getVaultContributorsAndInvites } from "@/lib/api";
 import { AddContributorDialog } from "@/components/dialog/add-contributor-dialog";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { InvitedList } from "./invited-list";
+import { InvitedList } from "@/components/contributors/invited-list";
 
 interface ContributorsSectionProps {
   vaultId: number;

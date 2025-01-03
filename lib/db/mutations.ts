@@ -69,6 +69,7 @@ export const deleteVault = async (id: number) => {
 // Memory mutations
 export const createMemory = async (
   title: string,
+  description: string | null,
   imageUrl: string,
   audioUrl: string,
   vaultId: number,
@@ -77,7 +78,7 @@ export const createMemory = async (
   // Used when adding a new memory to a vault
   return db
     .insert(memories)
-    .values({ title, imageUrl, audioUrl, vaultId, depositorId })
+    .values({ title, description, imageUrl, audioUrl, vaultId, depositorId })
     .returning();
 };
 

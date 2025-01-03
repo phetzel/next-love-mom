@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import { UploadButton } from "@/lib/uploadthing";
 
 const createMemorySchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
