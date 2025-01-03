@@ -1,6 +1,8 @@
 export interface Vault {
   id: string;
   name: string;
+  creatorId: string;
+  ownerId?: string;
   ownerName: string;
   memoryCount: number;
   lastUpdated: string;
@@ -11,6 +13,6 @@ export interface Memory {
   title: string;
   imageUrl: string;
   audioUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

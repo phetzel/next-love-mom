@@ -1,5 +1,5 @@
 import { db } from "./drizzle";
-import { vaults, memories, vaultContributors } from "./schema";
+import { vaults, memories, vaultContributors, invitations } from "./schema";
 import { eq, and } from "drizzle-orm";
 
 // Permissions
@@ -15,7 +15,16 @@ export const isUserContributor = async (vaultId: number, userId: string) => {
       )
     )
     .limit(1);
-  return result[0].count > 0;
+  return result.length > 0 && result[0].count > 0;
+};
+
+export const isUserCreator = async (vaultId: number, userId: string) => {
+  const result = await db
+    .select({ count: vaults.id })
+    .from(vaults)
+    .where(and(eq(vaults.id, vaultId), eq(vaults.creatorId, userId)))
+    .limit(1);
+  return result.length > 0 && result[0].count > 0;
 };
 
 export const isUserOwner = async (vaultId: number, userId: string) => {
@@ -25,7 +34,7 @@ export const isUserOwner = async (vaultId: number, userId: string) => {
     .from(vaults)
     .where(and(eq(vaults.id, vaultId), eq(vaults.ownerId, userId)))
     .limit(1);
-  return result[0].count > 0;
+  return result.length > 0 && result[0].count > 0;
 };
 
 export const canDeleteMemory = async (memoryId: number, userId: string) => {
@@ -74,6 +83,7 @@ export const getContributedVaults = async (userId: string) => {
       id: vaults.id,
       name: vaults.name,
       ownerId: vaults.ownerId,
+      creatorId: vaults.creatorId,
       createdAt: vaults.createdAt,
       updatedAt: vaults.updatedAt,
     })
@@ -133,4 +143,9 @@ export const getVaultDeposits = async (vaultId: number, userId: string) => {
     .where(
       and(eq(memories.vaultId, vaultId), eq(memories.depositorId, userId))
     );
+};
+
+// Invitations
+export const getVaultInvitations = async (vaultId: number) => {
+  return db.select().from(invitations).where(eq(invitations.vaultId, vaultId));
 };

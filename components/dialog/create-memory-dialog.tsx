@@ -6,7 +6,7 @@ import * as z from "zod";
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
-import { ImageIcon, Music, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 import { createMemoryAction } from "@/app/actions/memory";
 import {
@@ -86,7 +86,7 @@ export function CreateMemoryDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full max-w-xs flex items-center justify-center">
+        <Button className="w-full flex items-center justify-center">
           <Plus className="mr-2 h-4 w-4" /> Add New Memory
         </Button>
       </DialogTrigger>

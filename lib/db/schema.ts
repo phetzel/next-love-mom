@@ -5,8 +5,22 @@ import {
   text,
   timestamp,
   varchar,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
+// Enums
+export const invitationStatusEnum = pgEnum("invitation_status", [
+  "pending",
+  "accepted",
+  "rejected",
+]);
+
+export const invitationTypeEnum = pgEnum("invitation_type", [
+  "contributor",
+  "owner",
+]);
+
+// Tables
 export const vaults = pgTable("vaults", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -28,6 +42,19 @@ export const memories = pgTable("memories", {
     .references(() => vaults.id)
     .notNull(),
   depositorId: varchar("depositor_id", { length: 256 }).notNull(), // Clerk user ID
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const invitations = pgTable("invitations", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  status: invitationStatusEnum("status").default("pending").notNull(),
+  vaultId: serial("vault_id")
+    .references(() => vaults.id)
+    .notNull(),
+  invitorId: varchar("invitor_id", { length: 256 }).notNull(), // Clerk user ID
+  type: invitationTypeEnum("type").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
