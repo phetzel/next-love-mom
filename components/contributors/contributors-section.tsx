@@ -1,5 +1,9 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getVaultContributorsAndInvites } from "@/lib/api";
+import { AddContributorDialog } from "@/components/dialog/add-contributor-dialog";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import { InvitedList } from "./invited-list";
 
 interface ContributorsSectionProps {
   vaultId: number;
@@ -13,22 +17,36 @@ export default async function ContributorsSection({
   );
 
   return (
-    <ScrollArea className="h-[calc(100vh-20rem)] rounded-md border p-4">
-      <h2 className="font-bold text-lg mb-4">Contributors</h2>
-      <ul className="mb-4">
-        {contributors.map((contributor) => (
-          <li key={contributor.id}>User ID: {contributor.id}</li>
-        ))}
-      </ul>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Contributors</h2>
+        <AddContributorDialog vaultId={vaultId} />
+      </div>
 
-      <h2 className="font-bold text-lg mb-4">Pending Invitations</h2>
-      <ul>
-        {invitations.map((invite) => (
-          <li key={invite.id}>
-            {invite.email} - {invite.status}
-          </li>
-        ))}
-      </ul>
-    </ScrollArea>
+      <InvitedList invitations={invitations} />
+
+      <ScrollArea className="h-[calc(100vh-20rem)] rounded-md border">
+        <div className="p-4 space-y-6">
+          <div>
+            <h3 className="font-semibold text-lg mb-4">Active Contributors</h3>
+            <ul className="space-y-3">
+              {contributors.map((contributor) => (
+                <li
+                  key={contributor.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
+                >
+                  <span>{contributor.id}</span>
+                </li>
+              ))}
+              {contributors.length === 0 && (
+                <p className="text-muted-foreground text-sm">
+                  No active contributors yet
+                </p>
+              )}
+            </ul>
+          </div>
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

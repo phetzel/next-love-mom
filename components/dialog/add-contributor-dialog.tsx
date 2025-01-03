@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { UserPlus, X } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,22 +16,29 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus } from "lucide-react";
+import { inviteContributor } from "@/app/actions/invitation";
 
 interface AddContributorDialogProps {
-  onInvite: (email: string) => Promise<void>;
+  vaultId: number;
 }
 
-export function AddContributorDialog({ onInvite }: AddContributorDialogProps) {
+export function AddContributorDialog({ vaultId }: AddContributorDialogProps) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+
+  const handleInvite = async (email: string) => {
+    await inviteContributor(vaultId, email);
+    router.refresh();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      await onInvite(email);
+      await handleInvite(email);
       setEmail("");
       setOpen(false);
     } catch (error) {

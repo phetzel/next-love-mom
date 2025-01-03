@@ -1,18 +1,26 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { cancelInvitation } from "@/app/actions/invitation";
+import { Invite } from "@/types";
 
 interface InvitedListProps {
-  invitations: {
-    id: number;
-    email: string;
-    status: "pending" | "accepted" | "rejected";
-  }[];
-  onCancelInvite?: (id: number) => void;
+  invitations: Invite[];
 }
 
-export function InvitedList({ invitations, onCancelInvite }: InvitedListProps) {
+export function InvitedList({ invitations }: InvitedListProps) {
+  const router = useRouter();
+
+  const handleCancelInvitation = async (invitationId: number) => {
+    await cancelInvitation(invitationId);
+    router.refresh();
+  };
+
   if (!invitations.length) {
     return (
       <Card className="p-4">
@@ -38,11 +46,11 @@ export function InvitedList({ invitations, onCancelInvite }: InvitedListProps) {
                   {invitation.status}
                 </span>
               </div>
-              {invitation.status === "pending" && onCancelInvite && (
+              {invitation.status === "pending" && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => onCancelInvite(invitation.id)}
+                  onClick={() => handleCancelInvitation(invitation.id)}
                 >
                   <X className="h-4 w-4" />
                 </Button>

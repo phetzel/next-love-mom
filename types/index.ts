@@ -16,3 +16,9 @@ export interface Memory {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Invite {
+  id: number;
+  email: string;
+  status: "pending" | "accepted" | "rejected";
+}

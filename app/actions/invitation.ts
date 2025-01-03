@@ -14,7 +14,7 @@ export async function inviteContributor(vaultId: number, email: string) {
 
   const isCreator = await isUserCreator(vaultId, userId);
   const isOwner = await isUserOwner(vaultId, userId);
-  if (!isCreator || !isOwner) {
+  if (!isCreator && !isOwner) {
     throw new Error("Not authorized to invite contributors");
   }
 
@@ -43,7 +43,7 @@ export async function cancelInvitation(invitationId: number) {
 
   const isCreator = await isUserCreator(invitation.vaultId, userId);
   const isOwner = await isUserOwner(invitation.vaultId, userId);
-  if (!isCreator || !isOwner) {
+  if (!isCreator && !isOwner) {
     throw new Error("Not authorized to cancel this invitation");
   }
 
