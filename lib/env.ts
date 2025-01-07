@@ -5,6 +5,7 @@ export const env = createEnv({
   server: {
     CLERK_SECRET_KEY: z.string().min(1),
     DATABASE_URL: z.string().min(1),
+    RESEND_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
@@ -15,6 +16,7 @@ export const env = createEnv({
     // Server
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
 
     // Client
     NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
