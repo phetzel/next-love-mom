@@ -1,61 +1,52 @@
 import {
+  // Layout Components
+  Html,
+  Head,
+  Preview,
   Body,
-  Button,
   Container,
+  Section,
+
+  // Elements
+  Button,
+  Link,
+  Text,
   Heading,
   Hr,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Section,
+
+  // Styling
   Tailwind,
 } from "@react-email/components";
 
-const baseUrl = "https://example.com";
+interface InviteEmailProps {
+  inviteUrl: string;
+  vaultName: string;
+}
 
-export function InviteContributorEmail() {
+export function InviteContributorEmail({
+  inviteUrl,
+  vaultName,
+}: InviteEmailProps) {
   return (
     <Html>
-      <Preview>Welcome</Preview>
+      <Preview>You've been invited to {vaultName}</Preview>
       <Tailwind>
         <Body className="my-auto mx-auto font-sans">
-          <Container className="border-transparent my-[40px] mx-auto max-w-[600px]">
-            {/* <Logo baseUrl={baseUrl} /> */}
-            <Heading className="font-normal text-center p-0 my-[30px] mx-0">
-              Welcome to v1
+          <Container className="border border-solid border-gray-200 rounded my-[40px] mx-auto p-[20px] max-w-[600px]">
+            <Heading className="text-2xl font-normal text-center my-[30px]">
+              You've been invited to contribute
             </Heading>
             <Section className="mb-4">
-              Hi, I'm Pontus, one of the founders.
+              You've been invited to contribute memories to {vaultName}.
             </Section>
-            <Section className="mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-              euismod, nisi vel consectetur interdum, nisl nunc egestas nunc,
-              vitae tincidunt nisl nunc euismod nunc. Sed euismod, nisi vel
-              consectetur interdum, nisl nunc egestas nunc, vitae tincidunt nisl
-              nunc euismod nunc. Sed euismod, nisi vel consectetur interdum,
-              nisl nunc egestas nunc, vitae tincidunt nisl nunc euismod nunc.
-            </Section>
-            <Section className="mb-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </Section>
-            <Section className="mb-8">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </Section>
-            <Section className="mb-6">
-              <Link href={baseUrl}>
-                <Button className="bg-black text-white p-4 text-center">
-                  Get started
+            <Section className="mb-6 text-center">
+              <Link href={inviteUrl}>
+                <Button className="bg-black text-white px-6 py-3 rounded">
+                  Accept Invitation
                 </Button>
               </Link>
             </Section>
-            <Hr />
+            <Hr className="border-t border-gray-200" />
           </Container>
         </Body>
       </Tailwind>

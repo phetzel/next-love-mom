@@ -8,7 +8,7 @@ import { render } from "@react-email/render";
 import { env } from "@/lib/env";
 import { db } from "@/lib/db/drizzle";
 import { invitations } from "@/lib/db/schema";
-import { isUserCreator, isUserOwner } from "@/lib/db/queries";
+import { isUserCreator, isUserOwner, getVaultById } from "@/lib/db/queries";
 import { InviteContributorEmail } from "@/lib/email/emails/invite-contributor";
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -19,34 +19,51 @@ export async function inviteContributor(vaultId: number, email: string) {
     throw new Error("Not authenticated");
   }
 
+  const vault = await getVaultById(vaultId);
+  if (!vault) throw new Error("Vault not found");
+  console.log("vault", vault);
+
   const isCreator = await isUserCreator(vaultId, userId);
   const isOwner = await isUserOwner(vaultId, userId);
   if (!isCreator && !isOwner) {
     throw new Error("Not authorized to invite contributors");
   }
 
-  const [invite] = await db.insert(invitations).values({
-    email,
-    vaultId,
-    invitorId: userId,
-    type: "contributor",
-    status: "pending",
-  });
+  const [invite] = await db
+    .insert(invitations)
+    .values({
+      email,
+      vaultId,
+      invitorId: userId,
+      type: "contributor",
+      status: "pending",
+    })
+    .returning();
+  console.log("invite", invite);
 
-  console.log("Invite", invite);
+  const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/invite/${invite.id}`;
 
-  const mail = await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
-    to: ["delivered@resend.dev"],
-    subject: "hello world",
-    html: "<p>it works!</p>",
-  });
+  try {
+    const mail = await resend.emails.send({
+      from: "Memory Vault <invite@mail.iloveyouforever.live>",
+      to: [email],
+      subject: `You've been invited to contribute to ${vault.name}`,
+      react: InviteContributorEmail({
+        inviteUrl,
+        vaultName: vault.name,
+      }),
+    });
+    console.log("got mail", mail);
 
-  // const html = await render(<InviteContibutorEmail />, {
-  //   pretty: true,
-  // });
+    if (!mail.data) {
+      throw new Error("Failed to send email: " + mail.error);
+    }
 
-  console.log("got mail", mail);
+    return { success: true, inviteId: invite.id, mailId: mail.data };
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw new Error("Failed to send invitation email");
+  }
 }
 
 export async function cancelInvitation(invitationId: number) {
