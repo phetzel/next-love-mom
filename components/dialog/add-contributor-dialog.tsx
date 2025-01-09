@@ -1,5 +1,8 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
@@ -18,33 +21,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { inviteContributor } from "@/app/actions/invitation";
 
+const inviteContributorSchema = z.object({
+  email: z.string().email("Valid email is required"),
+  inviteName: z.string().min(1, "Name is required"),
+});
+
+type InviteContributorForm = z.infer<typeof inviteContributorSchema>;
+
 interface AddContributorDialogProps {
   vaultId: number;
 }
 
 export function AddContributorDialog({ vaultId }: AddContributorDialogProps) {
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
 
-  const handleInvite = async (email: string) => {
-    await inviteContributor(vaultId, email);
-    router.refresh();
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<InviteContributorForm>({
+    resolver: zodResolver(inviteContributorSchema),
+    defaultValues: {
+      email: "",
+      inviteName: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: InviteContributorForm) => {
     try {
-      setIsLoading(true);
-      await handleInvite(email);
-      setEmail("");
+      await inviteContributor(vaultId, data.email, data.inviteName);
       setOpen(false);
+      reset();
+      router.refresh();
     } catch (error) {
       console.error("Failed to send invitation:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -63,26 +75,46 @@ export function AddContributorDialog({ vaultId }: AddContributorDialogProps) {
             Send an invitation to collaborate on this vault.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="col-span-3"
-                required
-                disabled={isLoading}
-              />
+              <div className="col-span-3">
+                <Input
+                  id="email"
+                  type="email"
+                  {...register("email")}
+                  disabled={isSubmitting}
+                />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="inviteName" className="text-right">
+                Name
+              </Label>
+              <div className="col-span-3">
+                <Input
+                  id="inviteName"
+                  {...register("inviteName")}
+                  disabled={isSubmitting}
+                />
+                {errors.inviteName && (
+                  <p className="text-sm text-red-500">
+                    {errors.inviteName.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Sending..." : "Send Invitation"}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Sending..." : "Send Invitation"}
             </Button>
           </DialogFooter>
         </form>

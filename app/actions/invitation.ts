@@ -2,7 +2,7 @@
 
 import { Resend } from "resend";
 import { eq } from "drizzle-orm";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { render } from "@react-email/render";
 
 import { env } from "@/lib/env";
@@ -13,15 +13,25 @@ import { InviteContributorEmail } from "@/lib/email/emails/invite-contributor";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
-export async function inviteContributor(vaultId: number, email: string) {
+export async function inviteContributor(
+  vaultId: number,
+  email: string,
+  inviteName: string
+) {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Not authenticated");
   }
 
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("User not found");
+  }
+  console.log("inviteContributor user", user);
+
   const vault = await getVaultById(vaultId);
   if (!vault) throw new Error("Vault not found");
-  console.log("vault", vault);
+  console.log("inviteContributor vault", vault);
 
   const isCreator = await isUserCreator(vaultId, userId);
   const isOwner = await isUserOwner(vaultId, userId);
@@ -33,6 +43,7 @@ export async function inviteContributor(vaultId: number, email: string) {
     .insert(invitations)
     .values({
       email,
+      inviteName,
       vaultId,
       invitorId: userId,
       type: "contributor",

@@ -49,6 +49,7 @@ export const memories = pgTable("memories", {
 export const invitations = pgTable("invitations", {
   id: serial("id").primaryKey(),
   email: text("email").notNull(),
+  inviteName: text("invite_name"),
   status: invitationStatusEnum("status").default("pending").notNull(),
   vaultId: serial("vault_id")
     .references(() => vaults.id)
