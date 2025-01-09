@@ -49,7 +49,10 @@ export async function inviteContributor(vaultId: number, email: string) {
       to: [email],
       subject: `You've been invited to contribute to ${vault.name}`,
       react: InviteContributorEmail({
+        inviteName: email,
         inviteUrl,
+        invitedByName: vault.creatorId,
+        invitedByEmail: vault.creatorId,
         vaultName: vault.name,
       }),
     });
