@@ -3,7 +3,6 @@
 import { Resend } from "resend";
 import { eq } from "drizzle-orm";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { render } from "@react-email/render";
 
 import { env } from "@/lib/env";
 import { db } from "@/lib/db/drizzle";
@@ -33,12 +32,15 @@ export async function inviteContributor(
   if (!vault) throw new Error("Vault not found");
   console.log("inviteContributor vault", vault);
 
-  const isCreator = await isUserCreator(vaultId, userId);
-  const isOwner = await isUserOwner(vaultId, userId);
+  const isCreator = vault.creatorId === userId;
+  const isOwner = vault.ownerId === userId;
   if (!isCreator && !isOwner) {
     throw new Error("Not authorized to invite contributors");
   }
 
+  // Check if the user is already a contributor, owner, creator, or invited
+
+  // Create a new invite
   const [invite] = await db
     .insert(invitations)
     .values({
@@ -52,7 +54,7 @@ export async function inviteContributor(
     .returning();
   console.log("invite", invite);
 
-  const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/invite/${invite.id}`;
+  const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/dashboard`;
 
   try {
     const mail = await resend.emails.send({
@@ -60,10 +62,11 @@ export async function inviteContributor(
       to: [email],
       subject: `You've been invited to contribute to ${vault.name}`,
       react: InviteContributorEmail({
-        inviteName: email,
+        inviteName: inviteName,
         inviteUrl,
-        invitedByName: vault.creatorId,
+        invitedByName: user.username ?? "Someone",
         invitedByEmail: vault.creatorId,
+        invitedByImageUrl: user.imageUrl,
         vaultName: vault.name,
       }),
     });

@@ -12,7 +12,6 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await currentUser();
-  console.log("Backend user", user);
   if (!user) {
     redirect("/sign-in");
   }

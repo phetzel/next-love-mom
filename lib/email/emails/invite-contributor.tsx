@@ -24,6 +24,7 @@ interface InviteEmailProps {
   inviteUrl: string;
   invitedByName: string;
   invitedByEmail: string;
+  invitedByImageUrl?: string;
   vaultName: string;
 }
 
@@ -32,6 +33,7 @@ export function InviteContributorEmail({
   inviteUrl,
   invitedByName,
   invitedByEmail,
+  invitedByImageUrl,
   vaultName,
 }: InviteEmailProps) {
   const previewText = `Share memories in ${vaultName}'s memory vault`;
@@ -47,8 +49,8 @@ export function InviteContributorEmail({
             </Section>
 
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              You have been invited to share memories in{" "}
-              <strong>{vaultName}</strong> on <strong>ILYF</strong>
+              Join <strong>{vaultName}</strong> memory vault on{" "}
+              <strong>ILYF</strong>
             </Heading>
 
             <Text className="text-black text-[14px] leading-[24px]">
@@ -67,19 +69,19 @@ export function InviteContributorEmail({
               <strong>{vaultName}</strong> on <strong>ILYF</strong>.
             </Text>
 
-            {/* <Section>
+            <Section>
               <Row>
                 <Column align="right">
                   <Img
                     className="rounded-full"
-                    src={userImage}
+                    src={invitedByImageUrl}
                     width="64"
                     height="64"
                   />
                 </Column>
                 <Column align="center">
                   <Img
-                    src={`${baseUrl}/static/vercel-arrow.png`}
+                    src={`${env.NEXT_PUBLIC_APP_URL}/arrow.png`}
                     width="12"
                     height="9"
                     alt="invited you to"
@@ -88,22 +90,22 @@ export function InviteContributorEmail({
                 <Column align="left">
                   <Img
                     className="rounded-full"
-                    src={teamImage}
+                    src={`${env.NEXT_PUBLIC_APP_URL}/hand-heart.svg`}
                     width="64"
                     height="64"
                   />
                 </Column>
               </Row>
-            </Section> */}
+            </Section>
 
-            {/* <Section className="text-center mt-[32px] mb-[32px]">
+            <Section className="text-center mt-[32px] mb-[32px]">
               <Button
                 className="bg-[#000000] rounded text-white text-[12px] font-semibold no-underline text-center px-5 py-3"
-                href={inviteLink}
+                href={inviteUrl}
               >
-                Join the team
+                Join
               </Button>
-            </Section> */}
+            </Section>
           </Container>
         </Body>
       </Tailwind>

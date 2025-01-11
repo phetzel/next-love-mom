@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 export function Header() {
   const { signOut } = useClerk();
   const { user } = useUser();
-  console.log("user", user);
   const router = useRouter();
 
   const handleSignOut = async () => {
