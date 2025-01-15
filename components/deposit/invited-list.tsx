@@ -68,7 +68,7 @@ export function InvitedList({ invitations, vaultId }: InvitedListProps) {
               {invitations.map((invite) => (
                 <div
                   key={invite.id}
-                  className="flex items-center justify-between p-2 mb-2 rounded-lg bg-secondary transition-all duration-300 ease-in-out transform hover:scale-105"
+                  className="flex items-center justify-between p-2 mb-2 rounded-lg bg-secondary"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">
