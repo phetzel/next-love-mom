@@ -142,6 +142,7 @@ export async function getVaultContributorsAndInvites(vaultId: number) {
       id: inv.id,
       email: inv.email,
       status: inv.status,
+      inviteName: inv.inviteName,
     })),
   };
 }

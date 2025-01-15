@@ -9,12 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Settings, LogOut, User } from "lucide-react";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export function Header() {
   const { signOut } = useClerk();
-  const { user } = useUser();
   const router = useRouter();
 
   const handleSignOut = async () => {

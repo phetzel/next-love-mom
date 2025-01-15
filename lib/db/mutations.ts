@@ -1,4 +1,4 @@
-import { invitations, memories, vaultContributors, vaults } from "./schema";
+import { memories, vaultContributors, vaults } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "./drizzle";
 

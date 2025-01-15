@@ -29,10 +29,14 @@ const inviteContributorSchema = z.object({
 type InviteContributorForm = z.infer<typeof inviteContributorSchema>;
 
 interface AddContributorDialogProps {
+  disabled: boolean;
   vaultId: number;
 }
 
-export function AddContributorDialog({ vaultId }: AddContributorDialogProps) {
+export function AddContributorDialog({
+  disabled,
+  vaultId,
+}: AddContributorDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -63,9 +67,8 @@ export function AddContributorDialog({ vaultId }: AddContributorDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Invite Contributor
+        <Button disabled={disabled}>
+          <UserPlus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

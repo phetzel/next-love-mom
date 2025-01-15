@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 
-import DepositPageContent from "@/components/deposit-page-content";
-import ContributorsSection from "@/components/contributors/contributors-section";
+import DepositPageContent from "@/components/deposit/deposit-page-content";
+import DepositInvite from "@/components/deposit/deposit-invite";
 import { getUserVaultDeposits, getVault } from "@/lib/api";
 
 export default async function DepositPage({
@@ -23,18 +23,18 @@ export default async function DepositPage({
   const isCreator = vault.creatorId === user.id;
 
   return (
-    <main className="flex-grow container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-center mb-4 text-primary">
-        Deposit Memories
+    <main className="container mx-auto px-4 py-12">
+      <h1 className="text-4xl font-bold text-center mb-8 text-primary">
+        {vault.name}
       </h1>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="flex-grow">
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-grow lg:w-2/3">
           <DepositPageContent memories={memories} />
         </div>
         {isCreator && (
-          <div className="w-full md:w-1/3">
-            <ContributorsSection vaultId={vaultId} />
+          <div className="max-w-[400px] w-full lg:w-1/3 mx-auto">
+            <DepositInvite vaultId={vaultId} />
           </div>
         )}
       </div>

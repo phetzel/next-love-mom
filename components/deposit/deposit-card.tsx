@@ -1,7 +1,13 @@
 import { Eye, Trash2 } from "lucide-react";
-
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Memory } from "@/types";
 
 interface DepositCardProps {
@@ -12,21 +18,43 @@ interface DepositCardProps {
 
 export function DepositCard({ memory, onView, onDelete }: DepositCardProps) {
   return (
-    <Card className="flex justify-between items-center">
-      <CardHeader className="py-3">
-        <CardTitle className="text-sm">{memory.title}</CardTitle>
+    <Card className="overflow-hidden">
+      <CardHeader className="p-4">
+        <CardTitle className="text-lg">{memory.title}</CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
+          {new Date(memory.createdAt).toLocaleDateString()}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="flex items-center space-x-2 py-3">
-        <Button variant="outline" size="icon" onClick={() => onView(memory)}>
-          <Eye className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="destructive"
-          size="icon"
-          onClick={() => onDelete(memory.id)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+      <CardContent className="p-4 pt-0">
+        <div className="relative w-full h-40 mb-4">
+          <Image
+            src={memory.imageUrl || "/placeholder.svg"}
+            alt={memory.title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-md"
+          />
+        </div>
+
+        <div className="flex justify-between items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => onView(memory)}
+          >
+            <Eye className="h-4 w-4 mr-2" /> View
+          </Button>
+
+          <Button
+            variant="destructive"
+            size="sm"
+            className="flex-1"
+            onClick={() => onDelete(memory.id)}
+          >
+            <Trash2 className="h-4 w-4 mr-2" /> Delete
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

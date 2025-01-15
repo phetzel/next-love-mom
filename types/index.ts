@@ -20,6 +20,6 @@ export interface Memory {
 export interface Invite {
   id: number;
   email: string;
-  inviteName: string;
+  inviteName: string | null;
   status: "pending" | "accepted" | "rejected";
 }

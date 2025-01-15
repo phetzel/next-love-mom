@@ -5,7 +5,7 @@ import {
   Column,
   Head,
   Heading,
-  Hr,
+  // Hr,
   Html,
   Img,
   Link,

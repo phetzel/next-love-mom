@@ -35,19 +35,21 @@ export function DepositList({ memories }: DepositListProps) {
   };
 
   return (
-    <div className="mt-4 space-y-4 max-w-md mx-auto animate-accordion-down transition-all duration-600 ease-in-out max-h-[600px] overflow-hidden">
-      <h2 className="text-2xl font-semibold mb-4 text-center text-primary">
-        My Contributions
+    <div className="mt-4 space-y-6 max-w-2xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center text-primary">
+        My Deposits
       </h2>
 
-      {memories.map((memory) => (
-        <DepositCard
-          key={memory.id}
-          memory={memory}
-          onView={onView}
-          onDelete={() => setMemoryToDelete(memory)}
-        />
-      ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {memories.map((memory) => (
+          <DepositCard
+            key={memory.id}
+            memory={memory}
+            onView={onView}
+            onDelete={() => setMemoryToDelete(memory)}
+          />
+        ))}
+      </div>
 
       <MemoryViewDialog
         isOpen={!!selectedMemory}

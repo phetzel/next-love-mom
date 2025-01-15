@@ -86,7 +86,7 @@ export function CreateMemoryDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full flex items-center justify-center">
+        <Button className="w-full max-w-[300px] mx-auto flex items-center justify-center">
           <Plus className="mr-2 h-4 w-4" /> Add New Memory
         </Button>
       </DialogTrigger>
