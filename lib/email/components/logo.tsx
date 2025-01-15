@@ -3,11 +3,12 @@ import { Img } from "@react-email/components";
 import { env } from "@/lib/env";
 
 export function Logo() {
-  const logo = `${env.NEXT_PUBLIC_APP_URL}/vercel.svg`;
+  const logoSrc = `${env.NEXT_PUBLIC_APP_URL}/logo.jpeg`;
+  console.log("logoSrc", logoSrc);
 
   return (
     <Img
-      src={logo}
+      src={logoSrc}
       width="40"
       height="37"
       alt="Logo"
