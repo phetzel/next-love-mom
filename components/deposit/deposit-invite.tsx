@@ -6,8 +6,7 @@ interface DepositInviteProps {
 }
 
 export default async function DepositInvite({ vaultId }: DepositInviteProps) {
-  const { contributors, invitations } =
-    await getVaultContributorsAndInvites(vaultId);
+  const { invitations } = await getVaultContributorsAndInvites(vaultId);
 
   return <InvitedList invitations={invitations} vaultId={vaultId} />;
 }
