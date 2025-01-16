@@ -18,6 +18,7 @@ import {
 
 import { env } from "@/lib/env";
 import { Logo } from "@/lib/email/components/logo";
+import { InviteImages } from "@/lib/email/components/invite-images";
 
 interface InviteEmailProps {
   inviteName: string;
@@ -70,32 +71,7 @@ export function InviteContributorEmail({
             </Text>
 
             <Section>
-              <Row>
-                <Column align="right">
-                  <Img
-                    className="rounded-full"
-                    src={invitedByImageUrl}
-                    width="64"
-                    height="64"
-                  />
-                </Column>
-                <Column align="center">
-                  <Img
-                    src={`${env.NEXT_PUBLIC_APP_URL}/arrow.png`}
-                    width="12"
-                    height="9"
-                    alt="invited you to"
-                  />
-                </Column>
-                <Column align="left">
-                  <Img
-                    className="rounded-full"
-                    src={`${env.NEXT_PUBLIC_APP_URL}/hand-heart.svg`}
-                    width="64"
-                    height="64"
-                  />
-                </Column>
-              </Row>
+              <InviteImages invitedByImageUrl={invitedByImageUrl} />
             </Section>
 
             <Section className="text-center mt-[32px] mb-[32px]">

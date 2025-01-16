@@ -9,6 +9,7 @@ import { db } from "@/lib/db/drizzle";
 import { invitations } from "@/lib/db/schema";
 import { isUserCreator, isUserOwner, getVaultById } from "@/lib/db/queries";
 import { InviteContributorEmail } from "@/lib/email/emails/invite-contributor";
+import { getClerkImageUrl } from "@/lib/utils";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -65,8 +66,8 @@ export async function inviteContributor(
         inviteName: inviteName,
         inviteUrl,
         invitedByName: user.username ?? "Someone",
-        invitedByEmail: vault.creatorId,
-        invitedByImageUrl: user.imageUrl,
+        invitedByEmail: user.primaryEmailAddress?.emailAddress ?? "",
+        invitedByImageUrl: getClerkImageUrl(user.imageUrl),
         vaultName: vault.name,
       }),
     });
