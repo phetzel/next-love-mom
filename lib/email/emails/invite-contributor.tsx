@@ -13,7 +13,6 @@ import {
   Tailwind,
 } from "@react-email/components";
 
-import { env } from "@/lib/env";
 import { Logo } from "@/lib/email/components/logo";
 import { InviteImages } from "@/lib/email/components/invite-images";
 
