@@ -6,14 +6,27 @@ interface InviteImagesProps {
 }
 
 export function InviteImages({ invitedByImageUrl }: InviteImagesProps) {
-  const avatarSrc = `${env.NEXT_PUBLIC_APP_URL}/avatar.svg`;
+  let invitedBySrc;
+  if (invitedByImageUrl) {
+    invitedBySrc = invitedByImageUrl;
+    const params = new URLSearchParams();
+
+    params.set("height", "64");
+    params.set("width", "64");
+    params.set("quality", "100");
+    params.set("fit", "crop");
+
+    invitedBySrc = `${invitedBySrc}?${params.toString()}`;
+  } else {
+    invitedBySrc = `${env.NEXT_PUBLIC_APP_URL}/avatar.svg`;
+  }
 
   return (
     <Row>
       <Column align="right">
         <Img
           className="rounded-full"
-          src={invitedByImageUrl ?? avatarSrc}
+          src={invitedBySrc}
           width="64"
           height="64"
         />
