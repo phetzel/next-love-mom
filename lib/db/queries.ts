@@ -78,43 +78,27 @@ export const getVaultsByOwnerId = async (ownerId: string) => {
 
 export const getContributedVaults = async (userId: string) => {
   // Used in the dashboard to display vaults the user contributes to
-  return db
+  const rows = await db
     .select({
-      id: vaults.id,
-      name: vaults.name,
-      ownerId: vaults.ownerId,
-      creatorId: vaults.creatorId,
-      createdAt: vaults.createdAt,
-      updatedAt: vaults.updatedAt,
+      vault: vaults,
     })
     .from(vaultContributors)
     .innerJoin(vaults, eq(vaultContributors.vaultId, vaults.id))
     .where(eq(vaultContributors.userId, userId));
+
+  // Return only vault objects
+  return rows.map((row) => row.vault);
 };
 
 // Vault
-export const getVaultById = async (id: number) => {
-  // Used when viewing a specific vault's details, including all its memories
-  const result = await db
-    .select({
-      vault: vaults,
-      memories: memories,
-    })
+export const getVaultById = async (vaultId: number) => {
+  const [vault] = await db
+    .select()
     .from(vaults)
-    .leftJoin(memories, eq(vaults.id, memories.vaultId))
-    .where(eq(vaults.id, id));
+    .where(eq(vaults.id, vaultId))
+    .limit(1);
 
-  if (result.length === 0) {
-    return null;
-  }
-
-  const vault = result[0].vault;
-  const vaultMemories = result.map((r) => r.memories).filter((m) => m !== null);
-
-  return {
-    ...vault,
-    memories: vaultMemories,
-  };
+  return vault || null;
 };
 
 export const getVaultContributors = async (vaultId: number) => {
@@ -148,4 +132,13 @@ export const getVaultDeposits = async (vaultId: number, userId: string) => {
 // Invitations
 export const getVaultInvitations = async (vaultId: number) => {
   return db.select().from(invitations).where(eq(invitations.vaultId, vaultId));
+};
+
+export const getPendingUserInvites = async (email: string) => {
+  return await db.query.invitations.findMany({
+    where: and(eq(invitations.email, email), eq(invitations.status, "pending")),
+    with: {
+      vault: true,
+    },
+  });
 };

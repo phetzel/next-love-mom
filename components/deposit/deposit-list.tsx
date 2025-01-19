@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { Memory } from "@/types";
 import { DepositCard } from "@/components/deposit/deposit-card";
-import { MemoryViewDialog } from "@/components/dialog/view-memory-dialog";
-import { DeleteMemoryDialog } from "@/components/dialog/delete-memory-dialog";
+import { MemoryViewDialog } from "@/components/memory/view-memory-dialog";
+import { DeleteMemoryDialog } from "@/components/memory/delete-memory-dialog";
 import { deleteMemoryAction } from "@/app/actions/memory";
 
 interface DepositListProps {

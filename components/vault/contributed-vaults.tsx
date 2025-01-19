@@ -1,5 +1,5 @@
 import { VaultCard } from "@/components/vault/vault-card";
-import { CreateVaultDialog } from "@/components/dialog/create-vault-dialog";
+import { CreateVaultDialog } from "@/components/vault/create-vault-dialog";
 import { getUserContributedVaults } from "@/lib/api";
 
 export async function ContributedVaults() {
@@ -20,15 +20,7 @@ export async function ContributedVaults() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {contributedVaults.map((vault) => (
-            <VaultCard
-              key={vault.id}
-              id={vault.id}
-              name={vault.name}
-              ownerName={vault.ownerName}
-              memoryCount={vault.memoryCount}
-              lastUpdated={vault.lastUpdated}
-              isOwned={false}
-            />
+            <VaultCard key={vault.id} vault={vault} isOwned={false} />
           ))}
         </div>
       )}

@@ -2,23 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { VaultDetails } from "@/types";
+
 interface VaultCardProps {
-  id: string;
-  name: string;
-  ownerName: string;
-  memoryCount: number;
-  lastUpdated: string;
+  vault: VaultDetails;
   isOwned: boolean;
 }
 
-export function VaultCard({
-  id,
-  name,
-  ownerName,
-  memoryCount,
-  // lastUpdated,
-  isOwned,
-}: VaultCardProps) {
+export function VaultCard({ vault, isOwned }: VaultCardProps) {
+  const { id, ownerEmail, name, memoryCount, owner } = vault;
+
   return (
     <Card className="hover:shadow-lg transition-shadow border-2 border-primary/20">
       <CardHeader>
@@ -26,7 +19,9 @@ export function VaultCard({
       </CardHeader>
       <CardContent>
         {!isOwned && (
-          <p className="mb-2 text-muted-foreground">Owner: {ownerName}</p>
+          <p className="mb-2 text-muted-foreground">
+            Owner: {owner ? owner.name : ownerEmail}
+          </p>
         )}
         <p className="mb-4 text-muted-foreground">Memories: {memoryCount}</p>
         <Button

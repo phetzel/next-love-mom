@@ -1,11 +1,23 @@
+export interface User {
+  email: string;
+  name?: string | null;
+  imageUrl?: string;
+}
+
 export interface Vault {
-  id: string;
+  id: number;
   name: string;
+  ownerId: string | null;
   creatorId: string;
-  ownerId?: string;
-  ownerName: string;
+  ownerEmail: string;
+  isClaimed: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface VaultDetails extends Vault {
   memoryCount: number;
-  lastUpdated: string;
+  owner?: User;
 }
 
 export interface Memory {
@@ -22,4 +34,10 @@ export interface Invite {
   email: string;
   inviteName: string | null;
   status: "pending" | "accepted" | "rejected";
+  type: "contributor" | "owner";
+}
+
+export interface InviteDetails extends Invite {
+  vault: Vault;
+  invitor: User;
 }

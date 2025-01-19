@@ -15,7 +15,6 @@ interface MemoryPlayerProps {
 export function MemoryPlayer({ memory }: MemoryPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  console.log("MemoryPlayerProps", memory);
 
   const togglePlay = () => {
     if (audioRef.current) {

@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   pgTable,
@@ -59,6 +60,13 @@ export const invitations = pgTable("invitations", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  vault: one(vaults, {
+    fields: [invitations.vaultId],
+    references: [vaults.id],
+  }),
+}));
 
 export const vaultContributors = pgTable("vault_contributors", {
   id: serial("id").primaryKey(),

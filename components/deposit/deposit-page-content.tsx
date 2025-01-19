@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { CreateMemoryDialog } from "@/components/dialog/create-memory-dialog";
+import { CreateMemoryDialog } from "@/components/memory/create-memory-dialog";
 import { DepositList } from "@/components/deposit/deposit-list";
 import { Memory } from "@/types";
 

@@ -1,6 +1,8 @@
-import { OwnedVaults } from "@/components/vault/owned-vaults";
-import { ContributedVaults } from "@/components/vault/contributed-vaults";
 import { currentUser } from "@clerk/nextjs/server";
+
+import { ContributedVaults } from "@/components/vault/contributed-vaults";
+import { OwnedVaults } from "@/components/vault/owned-vaults";
+import { InvitationCelebration } from "@/components/invite/invitation-celebration";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -17,6 +19,8 @@ export default async function DashboardPage() {
       <p className="text-center mb-12 text-muted-foreground">
         Here are your Memory Vaults
       </p>
+
+      <InvitationCelebration />
 
       <OwnedVaults />
       <ContributedVaults />

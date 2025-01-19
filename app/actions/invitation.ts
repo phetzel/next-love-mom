@@ -13,6 +13,7 @@ import { getClerkImageUrl } from "@/lib/utils";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
+// Invite request functions
 export async function inviteContributor(
   vaultId: number,
   email: string,
@@ -27,19 +28,15 @@ export async function inviteContributor(
   if (!user) {
     throw new Error("User not found");
   }
-  console.log("inviteContributor user", user);
 
   const vault = await getVaultById(vaultId);
   if (!vault) throw new Error("Vault not found");
-  console.log("inviteContributor vault", vault);
 
   const isCreator = vault.creatorId === userId;
   const isOwner = vault.ownerId === userId;
   if (!isCreator && !isOwner) {
     throw new Error("Not authorized to invite contributors");
   }
-
-  // Check if the user is already a contributor, owner, creator, or invited
 
   // Create a new invite
   const [invite] = await db
@@ -53,7 +50,6 @@ export async function inviteContributor(
       status: "pending",
     })
     .returning();
-  console.log("invite", invite);
 
   const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/dashboard`;
 
@@ -71,7 +67,6 @@ export async function inviteContributor(
         vaultName: vault.name,
       }),
     });
-    console.log("got mail", mail);
 
     if (!mail.data) {
       throw new Error("Failed to send email: " + mail.error);
@@ -105,4 +100,65 @@ export async function cancelInvitation(invitationId: number) {
   }
 
   await db.delete(invitations).where(eq(invitations.id, invitationId));
+}
+
+// Invite response functions
+export async function acceptInvitation(invitationId: number) {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const invitation = await db.query.invitations.findFirst({
+    where: eq(invitations.id, invitationId),
+  });
+
+  if (!invitation) {
+    throw new Error("Invitation not found");
+  }
+
+  if (invitation.email !== user.primaryEmailAddress?.emailAddress) {
+    throw new Error("Not authorized to accept this invitation");
+  }
+
+  await db
+    .update(invitations)
+    .set({ status: "accepted" })
+    .where(eq(invitations.id, invitationId));
+
+  return { success: true, data: invitation };
+}
+
+export async function rejectInvitation(invitationId: number) {
+  const { userId } = await auth();
+  if (!userId) {
+    throw new Error("Not authenticated");
+  }
+
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const invitation = await db.query.invitations.findFirst({
+    where: eq(invitations.id, invitationId),
+  });
+
+  if (!invitation) {
+    throw new Error("Invitation not found");
+  }
+
+  if (invitation.email !== user.primaryEmailAddress?.emailAddress) {
+    throw new Error("Not authorized to reject this invitation");
+  }
+
+  await db
+    .update(invitations)
+    .set({ status: "rejected" })
+    .where(eq(invitations.id, invitationId));
 }

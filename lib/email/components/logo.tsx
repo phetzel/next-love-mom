@@ -4,7 +4,6 @@ import { env } from "@/lib/env";
 
 export function Logo() {
   const logoSrc = `${env.NEXT_PUBLIC_APP_URL}/logo.jpeg`;
-  console.log("logoSrc", logoSrc);
 
   return (
     <Img

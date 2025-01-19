@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/lib/db/drizzle";
@@ -6,6 +6,7 @@ import { memories } from "@/lib/db/schema";
 import {
   getVaultsByOwnerId,
   getContributedVaults,
+  getPendingUserInvites,
   getVaultDeposits,
   getVaultContributors,
   getVaultInvitations,
@@ -13,8 +14,9 @@ import {
   isUserOwner,
   getVaultById,
 } from "@/lib/db/queries";
-import { Vault, Memory } from "@/types";
+import { Vault, VaultDetails, Memory, Invite, InviteDetails } from "@/types";
 
+//
 async function requireAuth() {
   const user = await currentUser();
   if (!user) {
@@ -24,7 +26,7 @@ async function requireAuth() {
 }
 
 // Vault lists
-export async function getUserOwnedVaults(): Promise<Vault[]> {
+export async function getUserOwnedVaults(): Promise<VaultDetails[]> {
   const user = await requireAuth();
 
   const ownedVaults = await getVaultsByOwnerId(user.id);
@@ -38,18 +40,19 @@ export async function getUserOwnedVaults(): Promise<Vault[]> {
         .where(eq(memories.vaultId, vault.id));
 
       return {
-        id: vault.id.toString(),
-        name: vault.name,
-        ownerName: "You",
-        creatorId: vault.creatorId,
+        ...vault,
         memoryCount: memoryCount.length,
-        lastUpdated: vault.updatedAt.toISOString().split("T")[0],
+        owner: {
+          name: user.username,
+          email: user.primaryEmailAddress?.emailAddress || "",
+          imageUrl: user.imageUrl,
+        },
       };
     })
   );
 }
 
-export async function getUserContributedVaults(): Promise<Vault[]> {
+export async function getUserContributedVaults(): Promise<VaultDetails[]> {
   const user = await requireAuth();
 
   const contributedVaults = await getContributedVaults(user.id);
@@ -62,13 +65,24 @@ export async function getUserContributedVaults(): Promise<Vault[]> {
         .from(memories)
         .where(eq(memories.vaultId, vault.id));
 
+      if (vault.isClaimed && vault.ownerId) {
+        const client = await clerkClient();
+        const owner = await client.users.getUser(vault.ownerId);
+
+        return {
+          ...vault,
+          memoryCount: memoryCount.length,
+          owner: {
+            name: owner.username,
+            email: owner.primaryEmailAddress?.emailAddress || "",
+            imageUrl: owner.imageUrl,
+          },
+        };
+      }
+
       return {
-        id: vault.id.toString(),
-        name: vault.name,
-        ownerName: vault.ownerId ?? "", // TODO: Get owner name from Clerk
-        creatorId: vault.creatorId ?? "", // TODO: Get creator name from Clerk
+        ...vault,
         memoryCount: memoryCount.length,
-        lastUpdated: vault.updatedAt.toISOString().split("T")[0],
       };
     })
   );
@@ -87,14 +101,7 @@ export async function getVault(vaultId: number): Promise<Vault> {
     throw new Error("Vault not found");
   }
 
-  return {
-    id: vault.id.toString(),
-    name: vault.name,
-    ownerName: vault.ownerId ?? "", // TODO: Get owner name from Clerk
-    creatorId: vault.creatorId ?? "", // TODO: Get creator name from Clerk
-    memoryCount: vault.memories.length,
-    lastUpdated: vault.updatedAt.toISOString().split("T")[0],
-  };
+  return vault;
 }
 
 // Memory Lists
@@ -106,18 +113,13 @@ export async function getUserVaultDeposits(vaultId: number): Promise<Memory[]> {
 
   const deposits = await getVaultDeposits(vaultId, user.id);
 
-  return deposits.map((memory: Memory) => ({
-    id: memory.id,
-    title: memory.title,
-    imageUrl: memory.imageUrl,
-    audioUrl: memory.audioUrl,
-    createdAt: memory.createdAt,
-    updatedAt: memory.updatedAt,
-  }));
+  return deposits;
 }
 
 // Contibutors
-export async function getVaultContributorsAndInvites(vaultId: number) {
+export async function getVaultContributorsAndInvites(
+  vaultId: number
+): Promise<{ contributors: { id: string }[]; invitations: Invite[] }> {
   const user = await requireAuth();
 
   // Check if user is owner or creator
@@ -138,11 +140,42 @@ export async function getVaultContributorsAndInvites(vaultId: number) {
 
   return {
     contributors: contributors.map((c) => ({ id: c.id })),
-    invitations: allInvitations.map((inv) => ({
-      id: inv.id,
-      email: inv.email,
-      status: inv.status,
-      inviteName: inv.inviteName,
-    })),
+    invitations: allInvitations,
   };
+}
+
+// Invitations
+export async function getUserPendingInvites(): Promise<InviteDetails[]> {
+  const user = await requireAuth();
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!user.primaryEmailAddress) {
+    throw new Error("No primary email address");
+  }
+
+  const invites = await getPendingUserInvites(
+    user.primaryEmailAddress.emailAddress
+  );
+
+  const client = await clerkClient();
+
+  // Get invitor details from Clerk for each invite
+  const invitesWithDetails = await Promise.all(
+    invites.map(async (invite) => {
+      const invitor = await client.users.getUser(invite.invitorId);
+
+      return {
+        ...invite,
+        invitor: {
+          name: invitor.username,
+          email: invitor.primaryEmailAddress?.emailAddress || "",
+          imageUrl: invitor.imageUrl,
+        },
+      };
+    })
+  );
+
+  return invitesWithDetails;
 }
