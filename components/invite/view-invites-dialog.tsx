@@ -11,10 +11,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ViewInviteCard } from "@/components/invite/view-invite-card";
-import { Invite } from "@/types";
+import { InviteDetails } from "@/types";
 
 interface ViewInvitesDialogProps {
-  invites: Invite[];
+  invites: InviteDetails[];
 }
 
 export function ViewInvitesDialog({ invites }: ViewInvitesDialogProps) {

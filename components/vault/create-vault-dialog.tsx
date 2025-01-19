@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -57,21 +59,22 @@ export function CreateVaultDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-full transition-all duration-200 hover:bg-primary/10 hover:text-primary"
-        >
-          Create Memory Vault
-        </Button>
+        <div className="flex items-center">
+          <Button className="mt-12 mx-auto">
+            <Plus className="mr-2 h-4 w-4" />
+            Create New Vault for Someone
+          </Button>
+        </div>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Memory Vault</DialogTitle>
           <DialogDescription>
-            Create a memory vault for someone special. They&apos;ll be notified
-            and can start collecting memories.
+            Create a memory vault for someone special.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Vault Name</Label>
@@ -84,6 +87,7 @@ export function CreateVaultDialog() {
               <p className="text-sm text-red-500">{errors.name.message}</p>
             )}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="ownerEmail">Owner&apos;s Email</Label>
             <Input
@@ -98,6 +102,7 @@ export function CreateVaultDialog() {
               </p>
             )}
           </div>
+
           <DialogFooter>
             <Button
               type="button"
@@ -106,6 +111,7 @@ export function CreateVaultDialog() {
             >
               Cancel
             </Button>
+
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Creating..." : "Create Vault"}
             </Button>

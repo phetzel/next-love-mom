@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { acceptInvitation, rejectInvitation } from "@/app/actions/invitation";
-import { Invite } from "@/types";
+import { InviteDetails } from "@/types";
 
 interface ViewInviteCardProps {
-  currentInvite: Invite;
+  currentInvite: InviteDetails;
 }
 
 export function ViewInviteCard({ currentInvite }: ViewInviteCardProps) {
@@ -45,6 +45,8 @@ export function ViewInviteCard({ currentInvite }: ViewInviteCardProps) {
     }
   };
 
+  console.log("Current vault", currentInvite);
+
   return (
     <Card className="mt-4 overflow-hidden transition-shadow duration-300 ease-in-out hover:shadow-lg">
       <CardContent className="pt-6">
@@ -56,10 +58,10 @@ export function ViewInviteCard({ currentInvite }: ViewInviteCardProps) {
           )}
         </div>
         <h3 className="text-xl font-semibold text-center mb-2">
-          {/* {currentInvite.vaultName} */} vaultName
+          {currentInvite.vault.name}
         </h3>
         <p className="text-center text-muted-foreground mb-4">
-          {/* From: {currentInvite.senderName} */} senderName
+          From: {currentInvite.invitor.name}
         </p>
         <p className="text-center">
           {currentInvite.type === "owner"

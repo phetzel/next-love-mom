@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { ContributedVaults } from "@/components/vault/contributed-vaults";
 import { OwnedVaults } from "@/components/vault/owned-vaults";
 import { InvitationCelebration } from "@/components/invite/invitation-celebration";
+import { CreateVaultDialog } from "@/components/vault/create-vault-dialog";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -24,6 +25,7 @@ export default async function DashboardPage() {
 
       <OwnedVaults />
       <ContributedVaults />
+      <CreateVaultDialog />
     </main>
   );
 }
