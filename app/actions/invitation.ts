@@ -10,6 +10,7 @@ import { invitations } from "@/lib/db/schema";
 import { isUserCreator, isUserOwner, getVaultById } from "@/lib/db/queries";
 import { InviteContributorEmail } from "@/lib/email/emails/invite-contributor";
 import { getClerkImageUrl } from "@/lib/utils";
+import { addContributorToVault } from "@/lib/db/mutations";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
@@ -113,10 +114,12 @@ export async function acceptInvitation(invitationId: number) {
   if (!user) {
     throw new Error("User not found");
   }
+  console.log("user", user);
 
   const invitation = await db.query.invitations.findFirst({
     where: eq(invitations.id, invitationId),
   });
+  console.log("invitation", invitation);
 
   if (!invitation) {
     throw new Error("Invitation not found");
@@ -130,6 +133,10 @@ export async function acceptInvitation(invitationId: number) {
     .update(invitations)
     .set({ status: "accepted" })
     .where(eq(invitations.id, invitationId));
+
+  if (invitation.type === "contributor") {
+    await addContributorToVault(invitation.vaultId, userId);
+  }
 
   return { success: true, data: invitation };
 }
