@@ -6,7 +6,8 @@ import { db } from "./drizzle";
 export const createVault = async (
   name: string,
   creatorId: string,
-  ownerEmail: string
+  ownerEmail: string,
+  ownerName?: string
 ) => {
   // Used when creating a new memory vault for someone
   return db
@@ -15,10 +16,34 @@ export const createVault = async (
       name,
       creatorId,
       ownerEmail,
-      isClaimed: false,
+      ownerName,
+      isOwnerClaimed: false,
+      isOwnerInvited: false,
     })
     .returning();
 };
+
+export async function setOwnerClaimed(vaultId: number) {
+  return await db
+    .update(vaults)
+    .set({
+      isOwnerClaimed: true,
+      updatedAt: new Date(),
+    })
+    .where(eq(vaults.id, vaultId))
+    .returning();
+}
+
+export async function setOwnerInvited(vaultId: number) {
+  return await db
+    .update(vaults)
+    .set({
+      isOwnerInvited: true,
+      updatedAt: new Date(),
+    })
+    .where(eq(vaults.id, vaultId))
+    .returning();
+}
 
 // User deletion
 export const deleteUserData = async (userId: string) => {

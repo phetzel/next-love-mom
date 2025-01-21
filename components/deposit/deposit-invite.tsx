@@ -1,5 +1,5 @@
 import { getVaultContributorsAndInvites } from "@/lib/api";
-import { InvitedList } from "@/components/deposit/invited-list";
+import { InvitedList } from "@/components/invite/invited-list";
 
 interface DepositInviteProps {
   vaultId: number;

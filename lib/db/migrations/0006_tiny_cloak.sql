@@ -1,0 +1,1 @@
+ALTER TABLE "vaults" ADD COLUMN "owner_name" text DEFAULT '';

@@ -10,7 +10,9 @@ export interface Vault {
   ownerId: string | null;
   creatorId: string;
   ownerEmail: string;
-  isClaimed: boolean;
+  ownerName?: string | null;
+  isOwnerClaimed: boolean;
+  isOwnerInvited: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

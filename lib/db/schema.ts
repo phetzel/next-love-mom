@@ -28,7 +28,9 @@ export const vaults = pgTable("vaults", {
   ownerId: varchar("owner_id", { length: 256 }), // Clerk user ID (nullable until claimed)
   creatorId: varchar("creator_id", { length: 256 }).notNull(), // Clerk user ID who created the vault
   ownerEmail: text("owner_email").notNull(), // Email of intended owner
-  isClaimed: boolean("is_claimed").default(false).notNull(), // Whether the owner has claimed the vault
+  ownerName: text("owner_name"), // Name of intended owner
+  isOwnerInvited: boolean("is_owner_invited").default(false).notNull(), // Whether the owner has claimed the vault
+  isOwnerClaimed: boolean("is_owner_claimed").default(false).notNull(), // Whether the owner has claimed the vault
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
