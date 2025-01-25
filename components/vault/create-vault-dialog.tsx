@@ -6,6 +6,7 @@ import * as z from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 import {
   Dialog,
@@ -24,6 +25,7 @@ import { createVaultAction } from "@/app/actions/vault";
 const createVaultSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   ownerEmail: z.string().email("Invalid email address"),
+  ownerName: z.string().min(1, "Owner name is required").max(100),
 });
 
 type CreateVaultForm = z.infer<typeof createVaultSchema>;
@@ -31,6 +33,7 @@ type CreateVaultForm = z.infer<typeof createVaultSchema>;
 export function CreateVaultDialog() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
@@ -43,16 +46,28 @@ export function CreateVaultDialog() {
 
   const onSubmit = async (data: CreateVaultForm) => {
     try {
-      const result = await createVaultAction(data.name, data.ownerEmail);
+      const result = await createVaultAction(
+        data.name,
+        data.ownerEmail,
+        data.ownerName
+      );
       if (result.success) {
         setOpen(false);
         reset();
         router.refresh();
       } else {
-        console.error("Failed to create vault:", result.error);
+        toast({
+          variant: "destructive",
+          title: "Error creating vault",
+          description: result.error || "Failed to create vault",
+        });
       }
     } catch (error) {
-      console.error("Failed to create vault:", error);
+      toast({
+        variant: "destructive",
+        title: "Error creating vault",
+        description: "An unexpected error occurred while creating the vault",
+      });
     }
   };
 
@@ -89,6 +104,18 @@ export function CreateVaultDialog() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="ownerName">Owner&apos;s Name</Label>
+            <Input
+              {...register("ownerName")}
+              id="ownerName"
+              placeholder="Enter owner's name"
+            />
+            {errors.ownerName && (
+              <p className="text-sm text-red-500">{errors.ownerName.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="ownerEmail">Owner&apos;s Email</Label>
             <Input
               {...register("ownerEmail")}
@@ -103,7 +130,7 @@ export function CreateVaultDialog() {
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               type="button"
               variant="outline"

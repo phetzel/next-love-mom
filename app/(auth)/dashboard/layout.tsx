@@ -5,6 +5,7 @@ import { extractRouterConfig } from "uploadthing/server";
 
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/toaster";
 
 export default async function DashboardLayout({
   children,
@@ -23,6 +24,7 @@ export default async function DashboardLayout({
         <Header />
         {children}
       </div>
+      <Toaster />
     </>
   );
 }
