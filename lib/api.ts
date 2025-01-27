@@ -1,8 +1,5 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { eq } from "drizzle-orm";
 
-import { db } from "@/lib/db/drizzle";
-import { memories } from "@/lib/db/schema";
 import {
   getVaultsByOwnerId,
   getContributedVaults,
@@ -13,6 +10,7 @@ import {
   isUserCreator,
   isUserOwner,
   getVaultById,
+  getMemoryCount,
 } from "@/lib/db/queries";
 import { Vault, VaultDetails, Memory, Invite, InviteDetails } from "@/types";
 
@@ -34,10 +32,7 @@ export async function getUserOwnedVaults(): Promise<VaultDetails[]> {
   // Get memory counts and format data
   return Promise.all(
     ownedVaults.map(async (vault) => {
-      const memoryCount = await db
-        .select({ count: memories.id })
-        .from(memories)
-        .where(eq(memories.vaultId, vault.id));
+      const memoryCount = await getMemoryCount(vault.id);
 
       return {
         ...vault,
@@ -60,12 +55,9 @@ export async function getUserContributedVaults(): Promise<VaultDetails[]> {
   // Get memory counts and format data
   return Promise.all(
     contributedVaults.map(async (vault) => {
-      const memoryCount = await db
-        .select({ count: memories.id })
-        .from(memories)
-        .where(eq(memories.vaultId, vault.id));
+      const memoryCount = await getMemoryCount(vault.id);
 
-      if (vault.isClaimed && vault.ownerId) {
+      if (vault.isOwnerClaimed && vault.ownerId) {
         const client = await clerkClient();
         const owner = await client.users.getUser(vault.ownerId);
 

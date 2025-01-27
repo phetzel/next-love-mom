@@ -70,6 +70,12 @@ export const canDeleteMemory = async (memoryId: number, userId: string) => {
   };
 };
 
+export const canManageInvitation = async (vaultId: number, userId: string) => {
+  const isCreator = await isUserCreator(vaultId, userId);
+  const isOwner = await isUserOwner(vaultId, userId);
+  return isCreator || isOwner;
+};
+
 // Dashboard
 export const getVaultsByOwnerId = async (ownerId: string) => {
   // Used in the dashboard to display vaults owned by the current user
@@ -129,6 +135,15 @@ export const getVaultDeposits = async (vaultId: number, userId: string) => {
     );
 };
 
+// Memories
+export const getMemoryCount = async (vaultId: number) => {
+  // Used to get the total number of memories in a vault
+  return db
+    .select({ count: memories.id })
+    .from(memories)
+    .where(eq(memories.vaultId, vaultId));
+};
+
 // Invitations
 export const getVaultInvitations = async (vaultId: number) => {
   return db.select().from(invitations).where(eq(invitations.vaultId, vaultId));
@@ -138,12 +153,6 @@ export const getInvitationById = async (invitationId: number) => {
   return await db.query.invitations.findFirst({
     where: eq(invitations.id, invitationId),
   });
-};
-
-export const canManageInvitation = async (vaultId: number, userId: string) => {
-  const isCreator = await isUserCreator(vaultId, userId);
-  const isOwner = await isUserOwner(vaultId, userId);
-  return isCreator || isOwner;
 };
 
 export const hasInvitation = async (
