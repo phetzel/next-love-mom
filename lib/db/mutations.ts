@@ -1,4 +1,4 @@
-import { memories, vaultContributors, vaults } from "./schema";
+import { invitations, memories, vaultContributors, vaults } from "./schema";
 import { eq, and } from "drizzle-orm";
 import { db } from "./drizzle";
 
@@ -148,5 +148,44 @@ export const removeContributorFromVault = async (
         eq(vaultContributors.userId, userId)
       )
     )
+    .returning();
+};
+
+// Invitation mutations
+export const createInvitation = async (
+  email: string,
+  inviteName: string,
+  vaultId: number,
+  invitorId: string,
+  type: "owner" | "contributor"
+) => {
+  return db
+    .insert(invitations)
+    .values({
+      email,
+      inviteName,
+      vaultId,
+      invitorId,
+      type,
+      status: "pending",
+    })
+    .returning();
+};
+
+export const updateInvitationStatus = async (
+  invitationId: number,
+  status: "accepted" | "rejected"
+) => {
+  return db
+    .update(invitations)
+    .set({ status })
+    .where(eq(invitations.id, invitationId))
+    .returning();
+};
+
+export const deleteInvitation = async (invitationId: number) => {
+  return db
+    .delete(invitations)
+    .where(eq(invitations.id, invitationId))
     .returning();
 };

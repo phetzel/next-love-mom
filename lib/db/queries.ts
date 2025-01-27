@@ -1,6 +1,6 @@
 import { db } from "./drizzle";
 import { vaults, memories, vaultContributors, invitations } from "./schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 
 // Permissions
 export const isUserContributor = async (vaultId: number, userId: string) => {
@@ -132,6 +132,34 @@ export const getVaultDeposits = async (vaultId: number, userId: string) => {
 // Invitations
 export const getVaultInvitations = async (vaultId: number) => {
   return db.select().from(invitations).where(eq(invitations.vaultId, vaultId));
+};
+
+export const getInvitationById = async (invitationId: number) => {
+  return await db.query.invitations.findFirst({
+    where: eq(invitations.id, invitationId),
+  });
+};
+
+export const canManageInvitation = async (vaultId: number, userId: string) => {
+  const isCreator = await isUserCreator(vaultId, userId);
+  const isOwner = await isUserOwner(vaultId, userId);
+  return isCreator || isOwner;
+};
+
+export const hasInvitation = async (
+  email: string,
+  vaultId: number,
+  type: "owner" | "contributor"
+) => {
+  const result = await db.query.invitations.findFirst({
+    where: and(
+      eq(invitations.email, email),
+      eq(invitations.vaultId, vaultId),
+      eq(invitations.type, type),
+      or(eq(invitations.status, "pending"), eq(invitations.status, "accepted"))
+    ),
+  });
+  return !!result;
 };
 
 export const getPendingUserInvites = async (email: string) => {
