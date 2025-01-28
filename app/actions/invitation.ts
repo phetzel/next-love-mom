@@ -53,6 +53,11 @@ export async function inviteContributor(
     throw new Error("Cannot invite vault owner as contributor");
   }
 
+  // Check if email matches creator email
+  if (email === user.primaryEmailAddress?.emailAddress) {
+    throw new Error("Cannot invite vault creator as contributor");
+  }
+
   // Check for existing invites/contributors
   const hasExistingInvite = await hasInvitation(email, vaultId, "contributor");
   if (hasExistingInvite) {

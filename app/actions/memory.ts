@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { createMemory, deleteMemory } from "@/lib/db/mutations";
-import { canDeleteMemory } from "@/lib/db/queries";
+import { isUserContributor, canDeleteMemory } from "@/lib/db/queries";
 
 type CreateMemoryInput = {
   title: string;
@@ -23,6 +23,11 @@ export async function createMemoryAction({
   if (!userId) throw new Error("Not authenticated");
 
   try {
+    const hasPermission = await isUserContributor(vaultId, userId);
+    if (!hasPermission) {
+      throw new Error("Not authorized to create memory");
+    }
+
     const [memory] = await createMemory(
       title,
       description,
@@ -34,7 +39,6 @@ export async function createMemoryAction({
 
     return { success: true, data: memory };
   } catch (error) {
-    console.error("Failed to create memory:", error);
     return { success: false, error: "Failed to create memory" };
   }
 }

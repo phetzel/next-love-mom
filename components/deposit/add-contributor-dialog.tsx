@@ -1,13 +1,13 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UserPlus } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+// Existing action; adjust import path if necessary
 import { inviteContributor } from "@/app/actions/invitation";
 
 const inviteContributorSchema = z.object({
@@ -39,13 +50,9 @@ export function AddContributorDialog({
 }: AddContributorDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<InviteContributorForm>({
+  const form = useForm<InviteContributorForm>({
     resolver: zodResolver(inviteContributorSchema),
     defaultValues: {
       email: "",
@@ -55,72 +62,101 @@ export function AddContributorDialog({
 
   const onSubmit = async (data: InviteContributorForm) => {
     try {
-      await inviteContributor(vaultId, data.email, data.inviteName);
-      setOpen(false);
-      reset();
-      router.refresh();
+      const result = await inviteContributor(
+        vaultId,
+        data.email,
+        data.inviteName
+      );
+      if (result?.success) {
+        toast({
+          title: "Contributor Invited",
+          description: "Invitation sent successfully.",
+        });
+        setOpen(false);
+        form.reset();
+        router.refresh();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to invite contributor.",
+        });
+      }
     } catch (error) {
-      console.error("Failed to send invitation:", error);
+      // If inviteContributor throws, catch it here and display the error message
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred.";
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMsg,
+      });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button disabled={disabled}>
+        <Button disabled={disabled} className="flex items-center">
           <UserPlus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Invite Contributor</DialogTitle>
+          <DialogTitle>Add Contributor</DialogTitle>
           <DialogDescription>
-            Send an invitation to collaborate on this vault.
+            Invite new contributors to your vault.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <div className="col-span-3">
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  disabled={isSubmitting}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-            </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="inviteName" className="text-right">
-                Name
-              </Label>
-              <div className="col-span-3">
-                <Input
-                  id="inviteName"
-                  {...register("inviteName")}
-                  disabled={isSubmitting}
-                />
-                {errors.inviteName && (
-                  <p className="text-sm text-red-500">
-                    {errors.inviteName.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Sending..." : "Send Invitation"}
-            </Button>
-          </DialogFooter>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="inviteName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contributor Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contributor Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="email@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setOpen(false);
+                  form.reset();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Sending..." : "Invite"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
