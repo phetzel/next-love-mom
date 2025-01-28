@@ -9,6 +9,14 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -35,13 +43,22 @@ export function CreateVaultDialog() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<CreateVaultForm>({
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   reset,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<CreateVaultForm>({
+  //   resolver: zodResolver(createVaultSchema),
+  // });
+
+  const form = useForm<CreateVaultForm>({
     resolver: zodResolver(createVaultSchema),
+    defaultValues: {
+      name: "",
+      ownerEmail: "",
+      ownerName: "",
+    },
   });
 
   const onSubmit = async (data: CreateVaultForm) => {
@@ -52,8 +69,12 @@ export function CreateVaultDialog() {
         data.ownerName
       );
       if (result.success) {
+        toast({
+          title: "Success",
+          description: "Vault created successfully",
+        });
         setOpen(false);
-        reset();
+        form.reset();
         router.refresh();
       } else {
         toast({
@@ -90,7 +111,7 @@ export function CreateVaultDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Vault Name</Label>
             <Input
@@ -143,7 +164,69 @@ export function CreateVaultDialog() {
               {isSubmitting ? "Creating..." : "Create Vault"}
             </Button>
           </DialogFooter>
-        </form>
+        </form> */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vault Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter vault name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ownerName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Owner's Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter owner's name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ownerEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Owner's Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="Enter owner's email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Creating..." : "Create Vault"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

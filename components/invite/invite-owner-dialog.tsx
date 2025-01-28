@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { inviteOwner } from "@/app/actions/invitation";
 
 interface InviteOwnerDialogProps {
@@ -27,16 +27,16 @@ export function InviteOwnerDialog({ vaultId }: InviteOwnerDialogProps) {
     try {
       await inviteOwner(vaultId);
       setIsOpen(false);
-      //   toast({
-      //     title: "Invitation sent",
-      //     description: `An ownership invitation has been sent to ${values.email}`,
-      //   });
+      toast({
+        title: "Invitation sent",
+        description: `An ownership invitation has been sent to the owner of the vault.`,
+      });
     } catch (error) {
-      //   toast({
-      //     title: "Error",
-      //     description: "Failed to send invitation. Please try again.",
-      //     variant: "destructive",
-      //   });
+      toast({
+        title: "Error",
+        description: "Failed to send invitation. Please try again.",
+        variant: "destructive",
+      });
     }
   }
 

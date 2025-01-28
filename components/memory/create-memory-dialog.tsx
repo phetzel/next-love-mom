@@ -18,11 +18,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
+import { useToast } from "@/hooks/use-toast";
 import { UploadButton } from "@/lib/uploadthing";
 
 const createMemorySchema = z.object({
@@ -39,18 +47,28 @@ export function CreateMemoryDialog() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedAudio, setUploadedAudio] = useState<string | null>(null);
 
+  const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    setError,
-    clearErrors,
-    formState: { errors, isSubmitting },
-  } = useForm<CreateMemoryForm>({
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   reset,
+  //   setValue,
+  //   setError,
+  //   clearErrors,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<CreateMemoryForm>({
+  //   resolver: zodResolver(createMemorySchema),
+  //   defaultValues: {
+  //     title: "",
+  //     description: "",
+  //     imageUrl: "",
+  //     audioUrl: "",
+  //   },
+  // });
+  const form = useForm<CreateMemoryForm>({
     resolver: zodResolver(createMemorySchema),
     defaultValues: {
       title: "",
@@ -60,8 +78,6 @@ export function CreateMemoryDialog() {
     },
   });
 
-  // const onImageUpload
-
   const onSubmit = async (data: CreateMemoryForm) => {
     try {
       const memoryData = {
@@ -70,16 +86,28 @@ export function CreateMemoryDialog() {
       };
       const result = await createMemoryAction(memoryData);
       if (result.success) {
+        toast({
+          title: "Success",
+          description: "Memory created successfully",
+        });
         setOpen(false);
         setUploadedImage(null);
         setUploadedAudio(null);
-        reset();
+        form.reset();
         router.refresh();
       } else {
-        console.error("Failed to create vault:", result.error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.error || "Failed to create memory",
+        });
       }
     } catch (error) {
-      console.error("Failed to create vault:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred",
+      });
     }
   };
 
@@ -98,156 +126,161 @@ export function CreateMemoryDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          <div className="space-y-6">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                {...register("title")}
-                id="title"
-                placeholder="Enter memory title"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter memory title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.title && (
-                <p className="text-sm text-red-500">{errors.title.message}</p>
-              )}
-            </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                {...register("description")}
-                id="description"
-                placeholder="Enter memory description"
-                className="h-32 resize-none"
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter memory description"
+                        className="h-32 resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.description && (
-                <p className="text-sm text-red-500">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
 
-            {/* File Uploads */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* Image Upload */}
-              <div className="space-y-2 text-center">
-                <Label className="block mb-2">Image Upload</Label>
+              {/* File Uploads */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Image Upload */}
+                <div className="space-y-2 text-center">
+                  <Label className="block mb-2">Image Upload</Label>
 
-                {!uploadedImage ? (
-                  <UploadButton
-                    className="w-full ut-button:bg-primary ut-button:ut-readying:bg-primary/80"
-                    endpoint="imageUploader"
-                    onClientUploadComplete={(res) => {
-                      const url = res?.[0]?.url || "";
-                      setValue("imageUrl", url);
-                      setUploadedImage(url); // 2. Keep local state for preview
-                      clearErrors("imageUrl");
-                    }}
-                    onUploadError={(error) => {
-                      setError("imageUrl", {
-                        type: "manual",
-                        message: error.message,
-                      });
-                    }}
-                  />
-                ) : (
-                  <div className="relative group">
-                    <Image
-                      src={uploadedImage}
-                      alt="Uploaded image"
-                      width={200}
-                      height={200}
-                      className="rounded-md object-cover mx-auto max-h-[200px] w-auto"
+                  {!uploadedImage ? (
+                    <UploadButton
+                      className="w-full ut-button:bg-primary ut-button:ut-readying:bg-primary/80"
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        const url = res?.[0]?.url || "";
+                        form.setValue("imageUrl", url);
+                        setUploadedImage(url); // 2. Keep local state for preview
+                        form.clearErrors("imageUrl");
+                      }}
+                      onUploadError={(error) => {
+                        form.setError("imageUrl", {
+                          type: "manual",
+                          message: error.message,
+                        });
+                      }}
                     />
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setUploadedImage(null);
-                        setValue("imageUrl", "");
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-                {errors.imageUrl && (
-                  <p className="text-sm text-red-500">
-                    {errors.imageUrl.message}
-                  </p>
-                )}
-              </div>
+                  ) : (
+                    <div className="relative group">
+                      <Image
+                        src={uploadedImage}
+                        alt="Uploaded image"
+                        width={200}
+                        height={200}
+                        className="rounded-md object-cover mx-auto max-h-[200px] w-auto"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          setUploadedImage(null);
+                          form.setValue("imageUrl", "");
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  {form.formState.errors.imageUrl && (
+                    <p className="text-sm text-red-500">
+                      {form.formState.errors.imageUrl.message}
+                    </p>
+                  )}
+                </div>
 
-              {/* Audio Upload */}
-              <div className="space-y-2 text-center">
-                <Label className="block mb-2">Audio Upload</Label>
-                {!uploadedAudio ? (
-                  <UploadButton
-                    className="w-full ut-button:bg-primary ut-button:ut-readying:bg-primary/80"
-                    endpoint="audioUploader"
-                    onClientUploadComplete={(res) => {
-                      const url = res?.[0]?.url || "";
-                      setValue("audioUrl", url);
-                      setUploadedAudio(url); // 2. Keep local state for preview
-                      clearErrors("audioUrl");
-                    }}
-                    onUploadError={(error) => {
-                      setError("audioUrl", {
-                        type: "manual",
-                        message: error.message,
-                      });
-                    }}
-                  />
-                ) : (
-                  <div className="relative group flex flex-col items-center">
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setUploadedAudio(null);
-                        setValue("audioUrl", "");
+                {/* Audio Upload */}
+                <div className="space-y-2 text-center">
+                  <Label className="block mb-2">Audio Upload</Label>
+                  {!uploadedAudio ? (
+                    <UploadButton
+                      className="w-full ut-button:bg-primary ut-button:ut-readying:bg-primary/80"
+                      endpoint="audioUploader"
+                      onClientUploadComplete={(res) => {
+                        const url = res?.[0]?.url || "";
+                        form.setValue("audioUrl", url);
+                        setUploadedAudio(url); // 2. Keep local state for preview
+                        form.clearErrors("audioUrl");
                       }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+                      onUploadError={(error) => {
+                        form.setError("audioUrl", {
+                          type: "manual",
+                          message: error.message,
+                        });
+                      }}
+                    />
+                  ) : (
+                    <div className="relative group flex flex-col items-center">
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          setUploadedAudio(null);
+                          form.setValue("audioUrl", "");
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
 
-                    <audio controls className="w-full mt-14">
-                      <source src={uploadedAudio} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
-                )}
-                {errors.audioUrl && (
-                  <p className="text-sm text-red-500">
-                    {errors.audioUrl.message}
-                  </p>
-                )}
+                      <audio controls className="w-full mt-14">
+                        <source src={uploadedAudio} type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  )}
+                  {form.formState.errors.audioUrl && (
+                    <p className="text-sm text-red-500">
+                      {form.formState.errors.audioUrl.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-                setUploadedImage(null);
-                setUploadedAudio(null);
-                reset();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Memory"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setOpen(false);
+                  setUploadedImage(null);
+                  setUploadedAudio(null);
+                  form.reset();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Creating..." : "Create Memory"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface DeleteMemoryDialogProps {
   isOpen: boolean;
@@ -21,6 +22,24 @@ export function DeleteMemoryDialog({
   onConfirm,
   title,
 }: DeleteMemoryDialogProps) {
+  const { toast } = useToast();
+
+  const handleConfirm = async () => {
+    try {
+      await onConfirm();
+      toast({
+        title: "Success",
+        description: "Memory deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete memory",
+      });
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -35,7 +54,7 @@ export function DeleteMemoryDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={onConfirm}>
+          <Button variant="destructive" onClick={handleConfirm}>
             Delete
           </Button>
         </DialogFooter>
