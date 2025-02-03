@@ -4,6 +4,7 @@ import { ContributedVaults } from "@/components/vault/contributed-vaults";
 import { OwnedVaults } from "@/components/vault/owned-vaults";
 import { InvitationCelebration } from "@/components/invite/invitation-celebration";
 import { CreateVaultDialog } from "@/components/vault/create-vault-dialog";
+import { canUserCreateVault } from "@/lib/api";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -11,6 +12,9 @@ export default async function DashboardPage() {
   if (!user) {
     return null; // Handle no user case
   }
+
+  const isMaxUserVaults = await canUserCreateVault();
+  console.log("isMaxUserVaults", isMaxUserVaults);
 
   return (
     <main className="flex-grow container mx-auto px-4 py-12">
@@ -25,7 +29,7 @@ export default async function DashboardPage() {
 
       <OwnedVaults />
       <ContributedVaults />
-      <CreateVaultDialog />
+      <CreateVaultDialog isMaxUserVaults={isMaxUserVaults} />
     </main>
   );
 }

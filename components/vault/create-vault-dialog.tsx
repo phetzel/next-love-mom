@@ -1,13 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
+import { createVaultAction } from "@/app/actions/vault";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -28,7 +29,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createVaultAction } from "@/app/actions/vault";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const createVaultSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -38,19 +44,20 @@ const createVaultSchema = z.object({
 
 type CreateVaultForm = z.infer<typeof createVaultSchema>;
 
-export function CreateVaultDialog() {
-  const [open, setOpen] = useState(false);
+interface CreateVaultDialogProps {
+  isMaxUserVaults: number;
+}
+
+export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   reset,
-  //   formState: { errors, isSubmitting },
-  // } = useForm<CreateVaultForm>({
-  //   resolver: zodResolver(createVaultSchema),
-  // });
+  useEffect(() => {
+    if (isMaxUserVaults) {
+      setIsOpen(false);
+    }
+  }, [isMaxUserVaults]);
 
   const form = useForm<CreateVaultForm>({
     resolver: zodResolver(createVaultSchema),
@@ -62,6 +69,15 @@ export function CreateVaultDialog() {
   });
 
   const onSubmit = async (data: CreateVaultForm) => {
+    if (isMaxUserVaults) {
+      toast({
+        variant: "destructive",
+        title: "Error creating vault",
+        description: "You have reached the maximum number of vaults allowed.",
+      });
+      return;
+    }
+
     try {
       const result = await createVaultAction(
         data.name,
@@ -73,8 +89,17 @@ export function CreateVaultDialog() {
           title: "Success",
           description: "Vault created successfully",
         });
-        setOpen(false);
+        setIsOpen(false);
         form.reset();
+
+        console.log("result", result);
+
+        // const path =
+        // invite.data.type === "contributor"
+        //   ? `/dashboard/deposit/${invite.data.vaultId}`
+        //   : `/dashboard/vault/${invite.data.vaultId}`;
+
+        // router.push(path);
         router.refresh();
       } else {
         toast({
@@ -93,15 +118,36 @@ export function CreateVaultDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <div className="flex items-center">
-          <Button className="mt-12 mx-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            Create New Vault for Someone
-          </Button>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {isMaxUserVaults ? (
+        <div className="flex items-center mt-12">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-block mx-auto">
+                  <Button className="mx-auto" disabled={true}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Maximum Vaults Created
+                  </Button>
+                </span>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                <p>You have reached the maximum number of vaults allowed.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-      </DialogTrigger>
+      ) : (
+        <DialogTrigger asChild>
+          <div className="flex items-center">
+            <Button className="mt-12 mx-auto">
+              <Plus className="mr-2 h-4 w-4" />
+              Create New Vault for Someone
+            </Button>
+          </div>
+        </DialogTrigger>
+      )}
 
       <DialogContent>
         <DialogHeader>
@@ -111,60 +157,6 @@ export function CreateVaultDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        {/* <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Vault Name</Label>
-            <Input
-              {...register("name")}
-              id="name"
-              placeholder="Enter vault name"
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ownerName">Owner&apos;s Name</Label>
-            <Input
-              {...register("ownerName")}
-              id="ownerName"
-              placeholder="Enter owner's name"
-            />
-            {errors.ownerName && (
-              <p className="text-sm text-red-500">{errors.ownerName.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ownerEmail">Owner&apos;s Email</Label>
-            <Input
-              {...register("ownerEmail")}
-              id="ownerEmail"
-              type="email"
-              placeholder="Enter owner's email"
-            />
-            {errors.ownerEmail && (
-              <p className="text-sm text-red-500">
-                {errors.ownerEmail.message}
-              </p>
-            )}
-          </div>
-
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
-
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Vault"}
-            </Button>
-          </DialogFooter>
-        </form> */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -217,7 +209,7 @@ export function CreateVaultDialog() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setOpen(false)}
+                onClick={() => setIsOpen(false)}
               >
                 Cancel
               </Button>

@@ -1,5 +1,6 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 
+import { MAX_VAULTS_PER_CREATOR } from "@/lib/constants";
 import {
   getVaultsByOwnerId,
   getContributedVaults,
@@ -9,6 +10,7 @@ import {
   getVaultInvitations,
   isUserCreator,
   isUserOwner,
+  getVaultsByCreatorId,
   getVaultById,
   getMemoryCount,
 } from "@/lib/db/queries";
@@ -78,6 +80,17 @@ export async function getUserContributedVaults(): Promise<VaultDetails[]> {
       };
     })
   );
+}
+
+export async function canUserCreateVault(): Promise<boolean> {
+  const user = await requireAuth();
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const vaults = await getVaultsByCreatorId(user.id);
+  console.log("vaults", vaults);
+  return vaults.length <= MAX_VAULTS_PER_CREATOR;
 }
 
 // Vault

@@ -2,6 +2,8 @@
 
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createVault, addContributorToVault } from "@/lib/db/mutations";
+import { getVaultsByCreatorId } from "@/lib/db/queries";
+import { MAX_VAULTS_PER_CREATOR } from "@/lib/constants";
 
 export async function createVaultAction(
   name: string,
@@ -15,14 +17,14 @@ export async function createVaultAction(
   if (!user) throw new Error("User not found");
 
   // Prevent creating vault for self
-  console.log(
-    "Creating vault for:",
-    ownerEmail,
-    "by user:",
-    user.primaryEmailAddress?.emailAddress
-  );
   if (ownerEmail === user.primaryEmailAddress?.emailAddress) {
     return { success: false, error: "Cannot create a vault for yourself" };
+  }
+
+  // Limit number of vaults that a user can create
+  const createdVaults = await getVaultsByCreatorId(userId);
+  if (createdVaults.length >= MAX_VAULTS_PER_CREATOR) {
+    return { success: false, error: "Maximum vault limit reached" };
   }
 
   try {

@@ -96,6 +96,11 @@ export const getContributedVaults = async (userId: string) => {
   return rows.map((row) => row.vault);
 };
 
+export const getVaultsByCreatorId = async (creatorId: string) => {
+  // Used in the dashboard to display vaults created by the current user
+  return db.select().from(vaults).where(eq(vaults.creatorId, creatorId));
+};
+
 // Vault
 export const getVaultById = async (vaultId: number) => {
   const [vault] = await db
