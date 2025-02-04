@@ -92,15 +92,8 @@ export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
         setIsOpen(false);
         form.reset();
 
-        console.log("result", result);
-
-        // const path =
-        // invite.data.type === "contributor"
-        //   ? `/dashboard/deposit/${invite.data.vaultId}`
-        //   : `/dashboard/vault/${invite.data.vaultId}`;
-
-        // router.push(path);
-        router.refresh();
+        const path = `/dashboard/deposit/${result.data.id}`;
+        router.push(path);
       } else {
         toast({
           variant: "destructive",

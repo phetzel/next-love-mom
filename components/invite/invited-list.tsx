@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { AddContributorDialog } from "@/components/deposit/add-contributor-dialog";
+import { InviteContributorDialog } from "@/components/invite/invite-contributor-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { cancelInvitation } from "@/app/actions/invitation";
+import { MAX_INVITES_PER_VAULT } from "@/lib/constants";
 import { Invite } from "@/types";
 
 interface InvitedListProps {
@@ -28,19 +29,18 @@ export function InvitedList({ invitations, vaultId }: InvitedListProps) {
   const activeInvitations = invitations.filter(
     (invite) => invite.status !== "rejected"
   ).length;
-  const MAX_INVITES = 5;
-  const canInvite = activeInvitations < MAX_INVITES;
+  const canInvite = activeInvitations < MAX_INVITES_PER_VAULT;
 
   return (
     <Card className="w-full">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-2xl font-bold">
-            Invites ({activeInvitations}/{MAX_INVITES})
+            Invites ({activeInvitations}/{MAX_INVITES_PER_VAULT})
           </CardTitle>
 
           <div className="flex space-x-2">
-            <AddContributorDialog vaultId={vaultId} disabled={!canInvite} />
+            <InviteContributorDialog vaultId={vaultId} disabled={!canInvite} />
             <Button
               variant="outline"
               size="icon"

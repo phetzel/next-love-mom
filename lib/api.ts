@@ -89,8 +89,7 @@ export async function canUserCreateVault(): Promise<boolean> {
   }
 
   const vaults = await getVaultsByCreatorId(user.id);
-  console.log("vaults", vaults);
-  return vaults.length <= MAX_VAULTS_PER_CREATOR;
+  return vaults.length >= MAX_VAULTS_PER_CREATOR;
 }
 
 // Vault
@@ -122,9 +121,9 @@ export async function getUserVaultDeposits(vaultId: number): Promise<Memory[]> {
 }
 
 // Contibutors
-export async function getVaultContributorsAndInvites(
+export async function getVaultContributorInvites(
   vaultId: number
-): Promise<{ contributors: { id: string }[]; invitations: Invite[] }> {
+): Promise<{ invitations: Invite[] }> {
   const user = await requireAuth();
 
   // Check if user is owner or creator
@@ -137,15 +136,18 @@ export async function getVaultContributorsAndInvites(
     throw new Error("Not authorized to view contributors");
   }
 
-  // Get contributors and invitations
-  const [contributors, allInvitations] = await Promise.all([
-    getVaultContributors(vaultId),
-    getVaultInvitations(vaultId),
-  ]);
+  // Get contributor invitations
+  // const [contributors, allInvitations] = await Promise.all([
+  //   getVaultContributors(vaultId),
+  //   getVaultInvitations(vaultId),
+  // ]);
+  const contributorInvitations = await getVaultInvitations(
+    vaultId,
+    "contributor"
+  );
 
   return {
-    contributors: contributors.map((c) => ({ id: c.id })),
-    invitations: allInvitations,
+    invitations: contributorInvitations,
   };
 }
 

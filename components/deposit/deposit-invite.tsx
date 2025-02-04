@@ -1,4 +1,4 @@
-import { getVaultContributorsAndInvites } from "@/lib/api";
+import { getVaultContributorInvites } from "@/lib/api";
 import { InvitedList } from "@/components/invite/invited-list";
 
 interface DepositInviteProps {
@@ -6,7 +6,7 @@ interface DepositInviteProps {
 }
 
 export default async function DepositInvite({ vaultId }: DepositInviteProps) {
-  const { invitations } = await getVaultContributorsAndInvites(vaultId);
+  const { invitations } = await getVaultContributorInvites(vaultId);
 
   return <InvitedList invitations={invitations} vaultId={vaultId} />;
 }

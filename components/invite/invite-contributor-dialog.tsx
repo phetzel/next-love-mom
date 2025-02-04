@@ -39,15 +39,15 @@ const inviteContributorSchema = z.object({
 
 type InviteContributorForm = z.infer<typeof inviteContributorSchema>;
 
-interface AddContributorDialogProps {
+interface InviteContributorDialogProps {
   disabled: boolean;
   vaultId: number;
 }
 
-export function AddContributorDialog({
+export function InviteContributorDialog({
   disabled,
   vaultId,
-}: AddContributorDialogProps) {
+}: InviteContributorDialogProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { toast } = useToast();

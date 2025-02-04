@@ -150,8 +150,20 @@ export const getMemoryCount = async (vaultId: number) => {
 };
 
 // Invitations
-export const getVaultInvitations = async (vaultId: number) => {
-  return db.select().from(invitations).where(eq(invitations.vaultId, vaultId));
+export const getVaultInvitations = async (
+  vaultId: number,
+  type?: "owner" | "contributor"
+) => {
+  const baseQuery = db
+    .select()
+    .from(invitations)
+    .where(eq(invitations.vaultId, vaultId));
+
+  if (type) {
+    return baseQuery.where(eq(invitations.type, type));
+  }
+
+  return baseQuery;
 };
 
 export const getInvitationById = async (invitationId: number) => {
