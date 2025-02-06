@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
@@ -45,7 +44,7 @@ const createVaultSchema = z.object({
 type CreateVaultForm = z.infer<typeof createVaultSchema>;
 
 interface CreateVaultDialogProps {
-  isMaxUserVaults: number;
+  isMaxUserVaults: boolean;
 }
 
 export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
@@ -84,7 +83,7 @@ export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
         data.ownerEmail,
         data.ownerName
       );
-      if (result.success) {
+      if (result.success && result.data) {
         toast({
           title: "Success",
           description: "Vault created successfully",
@@ -102,6 +101,7 @@ export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
         });
       }
     } catch (error) {
+      console.error("Failed to create vault:", error);
       toast({
         variant: "destructive",
         title: "Error creating vault",
@@ -171,7 +171,7 @@ export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
               name="ownerName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Owner's Name</FormLabel>
+                  <FormLabel>Owner&apos;s Name</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Enter owner's name" />
                   </FormControl>
@@ -185,7 +185,7 @@ export function CreateVaultDialog({ isMaxUserVaults }: CreateVaultDialogProps) {
               name="ownerEmail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Owner's Email</FormLabel>
+                  <FormLabel>Owner&apos;s Email</FormLabel>
                   <FormControl>
                     <Input
                       {...field}

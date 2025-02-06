@@ -39,6 +39,7 @@ export async function createMemoryAction({
 
     return { success: true, data: memory };
   } catch (error) {
+    console.error("Failed to create memory:", error);
     return { success: false, error: "Failed to create memory" };
   }
 }

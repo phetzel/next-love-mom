@@ -6,7 +6,7 @@ import {
   getContributedVaults,
   getPendingUserInvites,
   getVaultDeposits,
-  getVaultContributors,
+  // getVaultContributors,
   getVaultInvitations,
   isUserCreator,
   isUserOwner,

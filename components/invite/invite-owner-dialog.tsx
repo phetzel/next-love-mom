@@ -32,6 +32,7 @@ export function InviteOwnerDialog({ vaultId }: InviteOwnerDialogProps) {
         description: `An ownership invitation has been sent to the owner of the vault.`,
       });
     } catch (error) {
+      console.error("Failed to create vault:", error);
       toast({
         title: "Error",
         description: "Failed to send invitation. Please try again.",

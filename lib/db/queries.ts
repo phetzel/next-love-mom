@@ -154,16 +154,16 @@ export const getVaultInvitations = async (
   vaultId: number,
   type?: "owner" | "contributor"
 ) => {
-  const baseQuery = db
-    .select()
-    .from(invitations)
-    .where(eq(invitations.vaultId, vaultId));
+  const conditions = [eq(invitations.vaultId, vaultId)];
 
   if (type) {
-    return baseQuery.where(eq(invitations.type, type));
+    conditions.push(eq(invitations.type, type));
   }
 
-  return baseQuery;
+  return db
+    .select()
+    .from(invitations)
+    .where(and(...conditions));
 };
 
 export const getInvitationById = async (invitationId: number) => {

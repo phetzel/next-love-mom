@@ -32,6 +32,7 @@ export function DeleteMemoryDialog({
         description: "Memory deleted successfully",
       });
     } catch (error) {
+      console.error("Failed to create vault:", error);
       toast({
         variant: "destructive",
         title: "Error",
