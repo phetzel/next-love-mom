@@ -43,3 +43,9 @@ export interface InviteDetails extends Invite {
   vault: Vault;
   invitor: User;
 }
+
+export interface Feature {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}
