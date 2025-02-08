@@ -112,6 +112,21 @@ export const getVaultById = async (vaultId: number) => {
   return vault || null;
 };
 
+// New query to fetch all memories for a given vault
+export const getVaultMemoriesByVaultId = async (vaultId: number) => {
+  return db
+    .select({
+      id: memories.id,
+      title: memories.title,
+      imageUrl: memories.imageUrl,
+      audioUrl: memories.audioUrl,
+      createdAt: memories.createdAt,
+      updatedAt: memories.updatedAt,
+    })
+    .from(memories)
+    .where(eq(memories.vaultId, vaultId));
+};
+
 export const getVaultContributors = async (vaultId: number) => {
   // Used to display all contributors for a specific vault
   return db

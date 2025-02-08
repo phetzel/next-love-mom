@@ -6,6 +6,7 @@ import {
   getContributedVaults,
   getPendingUserInvites,
   getVaultDeposits,
+  getVaultMemoriesByVaultId,
   // getVaultContributors,
   getVaultInvitations,
   isUserCreator,
@@ -106,6 +107,17 @@ export async function getVault(vaultId: number): Promise<Vault> {
   }
 
   return vault;
+}
+
+export async function getVaultMemories(vaultId: number) {
+  const user = await requireAuth();
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const memories = await getVaultMemoriesByVaultId(vaultId);
+
+  return memories;
 }
 
 // Memory Lists

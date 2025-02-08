@@ -1,6 +1,5 @@
 "use client";
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Play, Pause } from "lucide-react";
 
@@ -9,12 +8,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Memory } from "@/types";
 
 interface MemoryPlayerProps {
-  memory: Memory;
+  memory: Memory | null;
+  autoPlay?: boolean;
 }
 
-export function MemoryPlayer({ memory }: MemoryPlayerProps) {
+export function MemoryPlayer({ memory, autoPlay = false }: MemoryPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (memory && autoPlay && audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  }, [memory, autoPlay]);
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -26,6 +33,18 @@ export function MemoryPlayer({ memory }: MemoryPlayerProps) {
       setIsPlaying(!isPlaying);
     }
   };
+
+  if (!memory) {
+    return (
+      <Card className="overflow-hidden">
+        <CardContent className="p-4">
+          <p className="text-center text-muted-foreground">
+            No memory selected
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="overflow-hidden">
