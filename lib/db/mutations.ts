@@ -23,10 +23,11 @@ export const createVault = async (
     .returning();
 };
 
-export async function setOwnerClaimed(vaultId: number) {
+export async function setOwnerClaimed(vaultId: number, userId: string) {
   return await db
     .update(vaults)
     .set({
+      ownerId: userId,
       isOwnerClaimed: true,
       updatedAt: new Date(),
     })

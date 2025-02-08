@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -22,15 +23,19 @@ interface InviteOwnerDialogProps {
 
 export function InviteOwnerDialog({ vaultId }: InviteOwnerDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   async function onSubmit() {
     try {
       await inviteOwner(vaultId);
       setIsOpen(false);
+
       toast({
         title: "Invitation sent",
         description: `An ownership invitation has been sent to the owner of the vault.`,
       });
+
+      router.refresh();
     } catch (error) {
       console.error("Failed to create vault:", error);
       toast({

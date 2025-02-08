@@ -211,7 +211,7 @@ export async function acceptInvitation(invitationId: number) {
   if (invitation.type === "contributor") {
     await addContributorToVault(invitation.vaultId, userId);
   } else if (invitation.type === "owner") {
-    await setOwnerClaimed(invitation.vaultId);
+    await setOwnerClaimed(invitation.vaultId, userId);
   }
 
   return { success: true, data: invitation };
