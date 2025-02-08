@@ -6,14 +6,15 @@ import VaultPageContent from "@/components/vault/vault-page-content";
 export default async function VaultPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const user = await currentUser();
   if (!user) {
     throw new Error("User not authenticated");
   }
 
-  const vaultId = parseInt(params.id);
+  const { id } = await params;
+  const vaultId = parseInt(id);
   const vault = await getVault(vaultId);
   if (!vault) {
     throw new Error("Vault not found");

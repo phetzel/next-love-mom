@@ -15,10 +15,6 @@ export default function VaultPageContent({
   vault,
   memories,
 }: VaultPageContentProps) {
-  if (memories.length === 0) {
-    return <div>No memories found in this vault</div>;
-  }
-
   const [showList, setShowList] = useState(true);
   const [currentMemory, setCurrentMemory] = useState<Memory>(memories[0]);
 
@@ -27,6 +23,10 @@ export default function VaultPageContent({
     const randomIndex = Math.floor(Math.random() * memories.length);
     setCurrentMemory(memories[randomIndex]);
   };
+
+  if (memories.length === 0) {
+    return <div>No memories found in this vault</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

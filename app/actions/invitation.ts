@@ -3,6 +3,7 @@
 import { Resend } from "resend";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
+import { AppConfig } from "@/lib/AppConfig";
 import { env } from "@/lib/env";
 import {
   addContributorToVault,
@@ -77,7 +78,7 @@ export async function inviteContributor(
 
   try {
     const mail = await resend.emails.send({
-      from: "Memory Vault <invite@mail.iloveyouforever.live>",
+      from: `${AppConfig.name} <${AppConfig.email}>`,
       to: [email],
       subject: `You've been invited to contribute to ${vault.name}`,
       react: InviteContributorEmail({
@@ -141,7 +142,7 @@ export async function inviteOwner(vaultId: number) {
 
   try {
     const mail = await resend.emails.send({
-      from: "Memory Vault <invite@mail.iloveyouforever.live>",
+      from: `${AppConfig.name} <${AppConfig.email}>`,
       to: [vault.ownerEmail],
       subject: `You've been invited to ${vault.name}`,
       react: InviteOwnerEmail({
