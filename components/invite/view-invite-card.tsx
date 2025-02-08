@@ -45,8 +45,6 @@ export function ViewInviteCard({ currentInvite }: ViewInviteCardProps) {
     }
   };
 
-  console.log("Current vault", currentInvite);
-
   return (
     <Card className="mt-4 overflow-hidden transition-shadow duration-300 ease-in-out hover:shadow-lg">
       <CardContent className="pt-6">

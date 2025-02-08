@@ -14,7 +14,6 @@ export default async function DashboardPage() {
   }
 
   const isMaxUserVaults = await canUserCreateVault();
-  console.log("isMaxUserVaults", isMaxUserVaults);
 
   return (
     <main className="flex-grow container mx-auto px-4 py-12">
