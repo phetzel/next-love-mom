@@ -61,8 +61,20 @@ export async function getUserContributedVaults(): Promise<VaultDetails[]> {
       const memoryCount = await getMemoryCount(vault.id);
 
       if (vault.isOwnerClaimed && vault.ownerId) {
+        // Get vault owner
         const client = await clerkClient();
-        const owner = await client.users.getUser(vault.ownerId);
+        let owner;
+        try {
+          owner = await client.users.getUser(vault.ownerId);
+        } catch (error) {
+          console.error(`Error fetching owner for vault ${vault.id}:`, error);
+          // Fallback: Use data stored on the vault or default values
+          owner = {
+            username: vault.ownerName || "Unknown User",
+            primaryEmailAddress: { emailAddress: vault.ownerEmail || "" },
+            imageUrl: "/default-profile.png",
+          };
+        }
 
         return {
           ...vault,
@@ -183,14 +195,25 @@ export async function getUserPendingInvites(): Promise<InviteDetails[]> {
   // Get invitor details from Clerk for each invite
   const invitesWithDetails = await Promise.all(
     invites.map(async (invite) => {
-      const invitor = await client.users.getUser(invite.invitorId);
+      let invitorData;
+      try {
+        invitorData = await client.users.getUser(invite.invitorId);
+      } catch (error) {
+        console.error(`Error fetching invitor for invite ${invite.id}:`, error);
+        // Fallback: Use stored invite data or default values
+        invitorData = {
+          username: invite.inviteName || "Unknown Invitor",
+          primaryEmailAddress: { emailAddress: "" },
+          imageUrl: "/default-profile.png",
+        };
+      }
 
       return {
         ...invite,
         invitor: {
-          name: invitor.username,
-          email: invitor.primaryEmailAddress?.emailAddress || "",
-          imageUrl: invitor.imageUrl,
+          name: invitorData.username,
+          email: invitorData.primaryEmailAddress?.emailAddress || "",
+          imageUrl: invitorData.imageUrl,
         },
       };
     })
