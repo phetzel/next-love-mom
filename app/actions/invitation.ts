@@ -1,7 +1,7 @@
 "use server";
 
 import { Resend } from "resend";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 
 import { AppConfig } from "@/lib/AppConfig";
 import { env } from "@/lib/env";
@@ -74,6 +74,19 @@ export async function inviteContributor(
     "contributor"
   );
 
+  // Check if the invited user already exists in Clerk
+  const client = await clerkClient();
+  const existingUsers = await client.users.getUserList({
+    emailAddress: [email],
+  });
+
+  if (existingUsers.totalCount === 0) {
+    await client.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl: `${env.NEXT_PUBLIC_APP_URL}/accept-invitation?invitationId=${invite.id}`,
+    });
+  }
+
   const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/dashboard`;
 
   try {
@@ -137,6 +150,19 @@ export async function inviteOwner(vaultId: number) {
     userId,
     "owner"
   );
+
+  // Check if the invited user already exists in Clerk
+  const client = await clerkClient();
+  const existingUsers = await client.users.getUserList({
+    emailAddress: [vault.ownerEmail],
+  });
+
+  if (existingUsers.totalCount === 0) {
+    await client.invitations.createInvitation({
+      emailAddress: vault.ownerEmail,
+      redirectUrl: `${env.NEXT_PUBLIC_APP_URL}/accept-invitation?invitationId=${invite.id}`,
+    });
+  }
 
   const inviteUrl = `${env.NEXT_PUBLIC_APP_URL}/dashboard`;
 

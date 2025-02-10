@@ -22,14 +22,15 @@ export default function LandingPage() {
             <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/sign-in">Sign In</Link>
             </Button>
-            <Button
+
+            {/* <Button
               asChild
               variant="outline"
               size="lg"
               className="w-full sm:w-auto"
             >
               <Link href="/sign-up">Register</Link>
-            </Button>
+            </Button> */}
           </div>
         </div>
       </WavyBackground>
