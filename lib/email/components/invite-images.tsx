@@ -42,7 +42,7 @@ export function InviteImages({ invitedByImageUrl }: InviteImagesProps) {
       <Column align="left">
         <Img
           className="rounded-full"
-          src={`${env.NEXT_PUBLIC_APP_URL}/logo.jpeg`}
+          src={`${env.NEXT_PUBLIC_APP_URL}/logo.png`}
           width="64"
           height="64"
         />

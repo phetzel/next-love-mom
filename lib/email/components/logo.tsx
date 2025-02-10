@@ -3,7 +3,7 @@ import { Img } from "@react-email/components";
 import { env } from "@/lib/env";
 
 export function Logo() {
-  const logoSrc = `${env.NEXT_PUBLIC_APP_URL}/logo.jpeg`;
+  const logoSrc = `${env.NEXT_PUBLIC_APP_URL}/logo.png`;
 
   return (
     <Img
