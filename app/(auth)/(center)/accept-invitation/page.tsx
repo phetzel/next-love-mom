@@ -21,9 +21,6 @@ export default function Page() {
   const { user } = useUser();
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
   // Initialize React Hook Form using the zodResolver
   const {
