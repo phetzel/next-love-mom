@@ -14,6 +14,7 @@ export default function middleware(
   if (
     request.nextUrl.pathname.includes("/sign-in") ||
     request.nextUrl.pathname.includes("/sign-up") ||
+    request.nextUrl.pathname.includes("/accept-invitation") ||
     isProtectedRoute(request)
   ) {
     return clerkMiddleware(async (auth, req) => {
