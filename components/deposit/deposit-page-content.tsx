@@ -20,7 +20,7 @@ export default function DepositPageContent({
           Memory Deposit
         </h2>
 
-        <CreateMemoryDialog />
+        <CreateMemoryDialog onMemoryCreated={() => setShowList(true)} />
 
         <Button
           onClick={() => setShowList(!isShowList)}

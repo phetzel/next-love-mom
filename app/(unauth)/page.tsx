@@ -4,12 +4,16 @@ import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/landing-page/feature-card";
 import { WavyBackground } from "@/components/landing-page/wavy-background";
 import { features } from "@/lib/features";
-
+import { Logo } from "@/components/logo";
 export default function LandingPage() {
   return (
     <div className="flex flex-col">
       <WavyBackground>
         <div className="min-h-screen flex flex-col items-center justify-center px-8 pb-20">
+          <div className="flex items-center mb-4">
+            <Logo />
+          </div>
+
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">
             I Love You Forever
           </h1>

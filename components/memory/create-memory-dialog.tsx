@@ -42,7 +42,13 @@ const createMemorySchema = z.object({
 
 type CreateMemoryForm = z.infer<typeof createMemorySchema>;
 
-export function CreateMemoryDialog() {
+interface CreateMemoryDialogProps {
+  onMemoryCreated: () => void;
+}
+
+export function CreateMemoryDialog({
+  onMemoryCreated,
+}: CreateMemoryDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedAudio, setUploadedAudio] = useState<string | null>(null);
@@ -51,23 +57,6 @@ export function CreateMemoryDialog() {
   const router = useRouter();
   const params = useParams();
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   reset,
-  //   setValue,
-  //   setError,
-  //   clearErrors,
-  //   formState: { errors, isSubmitting },
-  // } = useForm<CreateMemoryForm>({
-  //   resolver: zodResolver(createMemorySchema),
-  //   defaultValues: {
-  //     title: "",
-  //     description: "",
-  //     imageUrl: "",
-  //     audioUrl: "",
-  //   },
-  // });
   const form = useForm<CreateMemoryForm>({
     resolver: zodResolver(createMemorySchema),
     defaultValues: {
@@ -90,6 +79,10 @@ export function CreateMemoryDialog() {
           title: "Success",
           description: "Memory created successfully",
         });
+
+        onMemoryCreated();
+
+        // Close the dialog + refresh page
         setOpen(false);
         setUploadedImage(null);
         setUploadedAudio(null);

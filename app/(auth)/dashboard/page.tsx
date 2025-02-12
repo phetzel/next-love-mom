@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 
+import { Logo } from "@/components/logo";
 import { ContributedVaults } from "@/components/vault/contributed-vaults";
 import { OwnedVaults } from "@/components/vault/owned-vaults";
 import { InvitationCelebration } from "@/components/invite/invitation-celebration";
@@ -17,7 +18,11 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex-grow container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-center mb-4 text-primary">
+      <div className="flex items-center justify-center mb-4">
+        <Logo />
+      </div>
+
+      <h1 className="text-4xl font-bold text-center mb-2 text-primary">
         Welcome, {user.username || "User"}!
       </h1>
       <p className="text-center mb-12 text-muted-foreground">
