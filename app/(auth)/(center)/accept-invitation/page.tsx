@@ -12,7 +12,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -156,9 +155,6 @@ export default function Page() {
             </Button>
           </form>
         </CardContent>
-        {/* <CardFooter className="text-center text-sm text-gray-600">
-          By signing up, you agree to our Terms of Service and Privacy Policy.
-        </CardFooter> */}
       </Card>
     </div>
   );
