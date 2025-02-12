@@ -5,6 +5,7 @@ import { FeatureCard } from "@/components/landing-page/feature-card";
 import { WavyBackground } from "@/components/landing-page/wavy-background";
 import { features } from "@/lib/features";
 import { Logo } from "@/components/logo";
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col">
