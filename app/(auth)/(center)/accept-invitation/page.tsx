@@ -99,15 +99,19 @@ export default function Page() {
         // In case further steps are required.
         setServerError("An unexpected error occurred.");
       }
-    } catch (err: any) {
-      if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
-        if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
-          // Only display the first Clerk error message.
-          const firstError = err.errors[0];
-          setServerError(firstError.message);
-        } else {
-          setServerError("An unexpected error occurred.");
-        }
+    } catch (error: unknown) {
+      // Ensure the error is an object, non-null, and check for a possible "errors" property
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "errors" in error &&
+        Array.isArray((error as { errors: { message: string }[] }).errors) &&
+        (error as { errors: { message: string }[] }).errors.length > 0
+      ) {
+        // Only display the first Clerk error message.
+        const firstError = (error as { errors: { message: string }[] })
+          .errors[0];
+        setServerError(firstError.message);
       } else {
         setServerError("An unexpected error occurred.");
       }
