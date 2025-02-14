@@ -33,6 +33,7 @@ export default function Page() {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   // Initialize React Hook Form using the zodResolver
   const {
@@ -81,6 +82,7 @@ export default function Page() {
   const onSubmit = async (data: FormData) => {
     if (!isLoaded) return;
     setIsLoading(true);
+    setServerError(null);
 
     try {
       const signUpAttempt = await signUp.create({
@@ -92,12 +94,23 @@ export default function Page() {
 
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
+        router.push("/dashboard");
       } else {
         // In case further steps are required.
-        console.error(JSON.stringify(signUpAttempt, null, 2));
+        setServerError("An unexpected error occurred.");
       }
-    } catch (err) {
-      console.error(JSON.stringify(err, null, 2));
+    } catch (err: any) {
+      if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
+        if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
+          // Only display the first Clerk error message.
+          const firstError = err.errors[0];
+          setServerError(firstError.message);
+        } else {
+          setServerError("An unexpected error occurred.");
+        }
+      } else {
+        setServerError("An unexpected error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +162,11 @@ export default function Page() {
                   </p>
                 )}
               </div>
+
+              {/* Display any global server error */}
+              {serverError && (
+                <p className="mt-4 text-sm text-red-500">{serverError}</p>
+              )}
             </div>
             <Button className="w-full mt-6" type="submit" disabled={isLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
