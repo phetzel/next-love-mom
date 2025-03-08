@@ -5,6 +5,7 @@ import type { NextFetchEvent, NextRequest } from "next/server";
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/api/uploadthing(.*)",
+  "/api/vaults/(.*)",
 ]);
 
 export default function middleware(
@@ -35,5 +36,6 @@ export const config = {
     "/",
     "/(api|trpc)(.*)",
     "/api/uploadthing(.*)",
+    "/api/(.*)",
   ],
 };

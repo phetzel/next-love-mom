@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Shuffle, List } from "lucide-react";
 import { MemoryPlayer } from "@/components/memory/memory-player";
@@ -53,7 +54,11 @@ export default function VaultPageContent({
           </div>
           {showList && (
             <div className="w-full md:w-1/3">
-              <MemoryList memories={memories} onSelect={setCurrentMemory} />
+              <MemoryList
+                memories={memories}
+                onSelect={setCurrentMemory}
+                vaultId={vault.id}
+              />
             </div>
           )}
         </div>
