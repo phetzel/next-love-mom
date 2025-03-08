@@ -5,16 +5,26 @@ import { Play, Pause } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { DownloadMemoryButton } from "@/components/memory/download-memory-button";
 import { Memory } from "@/types";
 
 interface MemoryPlayerProps {
   memory: Memory | null;
   autoPlay?: boolean;
+  vaultId?: number;
+  isVaultOwner?: boolean;
 }
 
-export function MemoryPlayer({ memory, autoPlay = false }: MemoryPlayerProps) {
+export function MemoryPlayer({
+  memory,
+  autoPlay = false,
+  vaultId,
+  isVaultOwner = false,
+}: MemoryPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const showDownloadButton = vaultId !== undefined && isVaultOwner;
 
   useEffect(() => {
     if (memory && autoPlay && audioRef.current) {
@@ -57,9 +67,19 @@ export function MemoryPlayer({ memory, autoPlay = false }: MemoryPlayerProps) {
             objectFit="cover"
           />
         </div>
+
         <div className="p-4">
-          <h2 className="text-2xl font-semibold mb-4">{memory.title}</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-medium">{memory.title}</h3>
+
+            {/* Only show download button in vault context for vault owners */}
+            {showDownloadButton && (
+              <DownloadMemoryButton vaultId={vaultId!} memoryId={memory.id} />
+            )}
+          </div>
+
           <audio ref={audioRef} src={memory.audioUrl} className="hidden" />
+
           <Button onClick={togglePlay} className="w-full">
             {isPlaying ? (
               <Pause className="mr-2 h-4 w-4" />

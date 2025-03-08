@@ -3,11 +3,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { getVaultMemoriesByVaultId, isUserOwner } from "@/lib/db/queries";
 import { getVaultById } from "@/lib/db/queries";
 import archiver from "archiver";
-import { Readable } from "stream";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { vaultId: string } }
+  { params }: { params: Promise<{ vaultId: string }> }
 ) {
   try {
     const user = await currentUser();
@@ -15,7 +14,9 @@ export async function GET(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const vaultId = parseInt(params.vaultId);
+    const { vaultId: vaultIdString } = await params;
+
+    const vaultId = parseInt(vaultIdString);
     if (isNaN(vaultId)) {
       return new NextResponse("Invalid vault ID", { status: 400 });
     }
@@ -60,7 +61,6 @@ export async function GET(
     headers.set("Content-Disposition", `attachment; filename="${filename}"`);
 
     // Create a stream that we'll pipe the archive into
-    const chunks: Uint8Array[] = [];
     const body = new ReadableStream({
       start(controller) {
         archive.on("data", (chunk) => {
@@ -104,21 +104,21 @@ export async function GET(
             }
           }
 
-          // Add a simple JSON file with memory metadata
-          const metadataJson = JSON.stringify(
-            {
-              id: memory.id,
-              title: memory.title,
-              createdAt: memory.createdAt,
-              updatedAt: memory.updatedAt,
-            },
-            null,
-            2
-          );
+          //   // Add a simple JSON file with memory metadata
+          //   const metadataJson = JSON.stringify(
+          //     {
+          //       id: memory.id,
+          //       title: memory.title,
+          //       createdAt: memory.createdAt,
+          //       updatedAt: memory.updatedAt,
+          //     },
+          //     null,
+          //     2
+          //   );
 
-          archive.append(metadataJson, {
-            name: `memory_${memory.id}/metadata.json`,
-          });
+          //   archive.append(metadataJson, {
+          //     name: `memory_${memory.id}/metadata.json`,
+          //   });
         } catch (error) {
           console.error(`Error processing memory ${memory.id}:`, error);
           // Continue with other memories if one fails

@@ -164,6 +164,26 @@ export const getMemoryCount = async (vaultId: number) => {
     .where(eq(memories.vaultId, vaultId));
 };
 
+export const getMemoryById = async (memoryId: number) => {
+  const [memory] = await db
+    .select({
+      id: memories.id,
+      title: memories.title,
+      description: memories.description,
+      imageUrl: memories.imageUrl,
+      audioUrl: memories.audioUrl,
+      vaultId: memories.vaultId,
+      depositorId: memories.depositorId,
+      createdAt: memories.createdAt,
+      updatedAt: memories.updatedAt,
+    })
+    .from(memories)
+    .where(eq(memories.id, memoryId))
+    .limit(1);
+
+  return memory || null;
+};
+
 // Invitations
 export const getVaultInvitations = async (
   vaultId: number,

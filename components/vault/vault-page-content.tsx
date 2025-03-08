@@ -35,6 +35,7 @@ export default function VaultPageContent({
         <h1 className="text-4xl font-bold text-center mb-8 text-primary">
           {vault.name}
         </h1>
+
         <div className="flex justify-center space-x-4 mb-8">
           <Button onClick={playRandomMemory} className="flex items-center">
             <Shuffle className="mr-2 h-4 w-4" /> Play Random Memory
@@ -48,9 +49,15 @@ export default function VaultPageContent({
             Memory List
           </Button>
         </div>
+
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex-grow">
-            <MemoryPlayer memory={currentMemory} autoPlay={true} />
+            <MemoryPlayer
+              memory={currentMemory}
+              autoPlay={false}
+              vaultId={vault.id}
+              isVaultOwner={true}
+            />
           </div>
           {showList && (
             <div className="w-full md:w-1/3">
