@@ -2,6 +2,9 @@
   "name": "next-love-mom",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "glob": "^10.5.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
