@@ -1,0 +1,25 @@
+# Dependabot policy (2026-11-22): security updates only, GROUPED into one PR per
+# batch instead of one per advisory. `open-pull-requests-limit: 0` turns version
+# updates off; security updates ignore that limit and are shaped by `groups`.
+# Same policy as rn-punch-promoter. Turn on "Dependabot security updates" in
+# Settings -> Code security for this file to take effect.
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/customizing-dependabot-security-prs
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: America/Los_Angeles
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - '*'
+    commit-message:
+      prefix: 'build(deps)'
+    labels:
+      - dependencies
