@@ -4,6 +4,7 @@ import DepositPageContent from "@/components/deposit/deposit-page-content";
 import DepositInvite from "@/components/deposit/deposit-invite";
 import { InviteOwnerCard } from "@/components/invite/invite-owner-card";
 import { getUserVaultDeposits, getVault } from "@/lib/api";
+import { isUserContributor } from "@/lib/db/queries";
 
 export default async function DepositPage({
   params,
@@ -18,6 +19,16 @@ export default async function DepositPage({
 
   const { id } = await params;
   const vaultId = parseInt(id);
+  if (isNaN(vaultId)) {
+    throw new Error("Invalid vault ID");
+  }
+
+  // Only contributors (the creator is added as one) may view a vault's deposits.
+  // Don't rely on middleware alone for this: see GHSA-vqx2-fgx2-5wq9.
+  if (!(await isUserContributor(vaultId, user.id))) {
+    throw new Error("Not authorized: You are not a contributor to this vault");
+  }
+
   const vault = await getVault(vaultId);
   const memories = await getUserVaultDeposits(vaultId);
 
